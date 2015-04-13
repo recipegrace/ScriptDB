@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.web.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane fx:id="mainScene" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="464.0" prefWidth="624.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.recipegrace.main.MainViewController">
+   <top>
+      <MenuBar fx:id="mainMenuBar" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#newJob" text="New job" />
+              <MenuItem mnemonicParsing="false" onAction="#close" text="Close" />
+                  <MenuItem mnemonicParsing="false" onAction="#newProject" text="New project" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <left>
+      <TreeView fx:id="navigatorTree" onMouseClicked="#treeMouseClicked" BorderPane.alignment="CENTER" />
+   </left>
+   <center>
+      <TabPane fx:id="mainTab">
+         <tabs>
+            <Tab closable="false" text="Job details">
+               <content>
+                  <GridPane BorderPane.alignment="CENTER">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="112.0" minWidth="10.0" prefWidth="17.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="218.0" minWidth="10.0" prefWidth="130.02737426757812" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="263.0" minWidth="10.0" prefWidth="179.97262573242188" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="263.0" minWidth="10.0" prefWidth="59.001953125" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="Project" GridPane.columnIndex="1" />
+                        <Label text="Main class" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="VM arguments" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="Program arguments" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="cmbProjects" prefWidth="150.0" GridPane.columnIndex="2" />
+                        <TableView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="C1" />
+                            <TableColumn prefWidth="75.0" text="C2" />
+                          </columns>
+                        </TableView>
+                        <TableView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="C1" />
+                            <TableColumn prefWidth="75.0" text="C2" />
+                          </columns>
+                        </TableView>
+                        <Button mnemonicParsing="false" text="New" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <Button mnemonicParsing="false" text="New" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <Button mnemonicParsing="false" text="Save" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                     </children>
+                  </GridPane>
+               </content>
+            </Tab>
+            <Tab closable="false" text="Script template">
+               <content>
+                  <Pane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <TextArea />
+                     </children>
+                  </Pane>
+               </content>
+            </Tab>
+            <Tab closable="false" text="Generated script">
+               <content>
+                  <Pane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <TextArea />
+                     </children>
+                  </Pane>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </center>
+   <bottom>
+      <TextArea fx:id="console" prefHeight="65.0" prefWidth="577.0" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>
