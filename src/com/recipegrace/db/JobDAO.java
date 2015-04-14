@@ -67,7 +67,7 @@ public class JobDAO extends AbstractDAO<Job>{
 
     @Override
     protected String getFile() {
-        return "jobs.json";
+        return "db/jobs.json";
     }
     protected Type getType() {
         return new TypeToken<ArrayList<Job>>() {}.getType();

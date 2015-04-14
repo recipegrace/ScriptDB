@@ -1,5 +1,4 @@
-projects.json
-jobs.json
+db/
 # Eclipse
 .classpath
 .project

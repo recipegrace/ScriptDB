@@ -66,7 +66,7 @@ public class ProjectDAO extends AbstractDAO<Project> {
 
     @Override
     protected String getFile() {
-        return "projects.json";
+        return "db/projects.json";
     }
     protected Type getType() {
         return new TypeToken<ArrayList<Project>>() {}.getType();

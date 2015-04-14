@@ -44,7 +44,7 @@ public class TemplateDAO extends AbstractDAO<Template> {
 
     @Override
     protected String getFile() {
-        return "templates.json";
+        return "db/templates.json";
     }
     protected Type getType() {
         return new TypeToken<ArrayList<Template>>() {}.getType();
