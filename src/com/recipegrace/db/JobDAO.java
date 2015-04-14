@@ -20,19 +20,35 @@ import java.util.stream.Stream;
  */
 public class JobDAO extends AbstractDAO<Job>{
 
-    public void createJob(String projectName, String mainClass, Map<String, String> vmArguments, Map<String, String> programArguments) throws IOException, HadoopRunnerException {
+    public void createJob(String projectName, String templateName, String mainClass, Map<String, String> vmArguments, Map<String, String> programArguments) throws IOException, HadoopRunnerException {
         checkJobExist(projectName,mainClass);
-        Job job = new Job();
-        job.setMainClassName(mainClass);
-        job.setProjectName(projectName);
-        job.setVmArguments(vmArguments);
-        job.setProgramArguments(programArguments);
+        Job job = getJob(projectName, templateName, mainClass, vmArguments, programArguments);
        List<Job> jobs = getAll();
         jobs.add(job);
         saveAsJSON(jobs);
 
     }
 
+    private Job getJob(String projectName, String templateName, String mainClass, Map<String, String> vmArguments, Map<String, String> programArguments) {
+        Job job = new Job();
+        job.setMainClassName(mainClass);
+        job.setTemplateName(templateName);
+        job.setProjectName(projectName);
+        job.setVmArguments(vmArguments);
+        job.setProgramArguments(programArguments);
+        return job;
+    }
+
+    public void saveJob(String projectName, String templateName, String mainClass, Map<String, String> vmArguments, Map<String, String> programArguments) throws IOException, HadoopRunnerException {
+
+        Job job =getJob(projectName, templateName, mainClass, vmArguments, programArguments);
+        List<Job> jobs = getAll().stream()
+                .filter(f-> ! (f.getProjectName().equals(projectName) && f.getMainClassName().equals(mainClass)))
+                .collect(Collectors.toList());
+        jobs.add(job);
+        saveAsJSON(jobs);
+
+    }
     private void checkJobExist(String projectName, String mainClass) throws FileNotFoundException, HadoopRunnerException {
 
         long size=

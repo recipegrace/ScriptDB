@@ -13,3 +13,4 @@ jobs.json
 # Mac
 .DS_Store
 out/
+.tests/

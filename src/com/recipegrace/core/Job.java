@@ -11,6 +11,7 @@ public class Job {
     private String mainClassName;
     private Map<String,String> vmArguments;
     private Map<String,String> programArguments;
+    private String templateName;
 
     public String getProjectName() {
         return projectName;
@@ -42,5 +43,13 @@ public class Job {
 
     public void setProgramArguments(Map<String, String> programArguments) {
         this.programArguments = programArguments;
+    }
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
     }
 }

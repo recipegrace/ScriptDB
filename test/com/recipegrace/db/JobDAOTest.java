@@ -19,8 +19,8 @@ public class JobDAOTest extends AbstractDAOTest{
     public void testCreateJob() throws IOException, HadoopRunnerException {
         JobDAO dao = new JobDAO();
         Map<String,String> vmArguments = new HashMap<String, String>();
-        dao.createJob("projectName", "mainClass1", vmArguments, new HashMap<String,String>());
-        dao.createJob("projectName", "mainClass2", vmArguments, new HashMap<String,String>());
+        dao.createJob("projectName","projectName", "mainClass1", vmArguments, new HashMap<String,String>());
+        dao.createJob("projectName","projectName", "mainClass2", vmArguments, new HashMap<String,String>());
         List<Job> jobs =dao.getJobs("projectName");
         assertEquals(jobs.size(), 2);
     }
@@ -28,15 +28,15 @@ public class JobDAOTest extends AbstractDAOTest{
     public void testSameCreateJob() throws IOException, HadoopRunnerException {
         JobDAO dao = new JobDAO();
         Map<String,String> vmArguments = new HashMap<String, String>();
-        dao.createJob("projectName", "mainClass1", vmArguments, new HashMap<String,String>());
-        dao.createJob("projectName", "mainClass1", vmArguments, new HashMap<String, String>());
+        dao.createJob("projectName","projectName", "mainClass1", vmArguments, new HashMap<String,String>());
+        dao.createJob("projectName","projectName", "mainClass1", vmArguments, new HashMap<String, String>());
     }
     @Test
     public void testJobDetails() throws IOException, HadoopRunnerException {
         JobDAO dao = new JobDAO();
         Map<String,String> vmArguments = new HashMap<String, String>();
         vmArguments.put("key", "value");
-        dao.createJob("projectName", "mainClass1", vmArguments, new HashMap<String, String>());
+        dao.createJob("projectName","projectName", "mainClass1", vmArguments, new HashMap<String, String>());
         Job job = dao.getJob("projectName", "mainClass1");
         assertEquals(job.getVmArguments().get("key"), "value");
     }

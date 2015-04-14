@@ -20,14 +20,12 @@ import java.io.File;
 public class ProjectDialog extends Dialog<Project> {
 
 
-    private boolean editMode ;
+    private boolean editMode =false;
     public ProjectDialog() {
         this.setTitle("New Project");
         this.setHeaderText("Create a new project!");
         createProjectForm();
         validations();
-        this.editMode=editMode;
-
         Platform.runLater(() -> txtProjectName.requestFocus());
         convertResultToProject();
 

@@ -14,6 +14,9 @@ public class AbstractDAOTest {
         file1.delete();
         File file2 = new File("jobs.json");
         file2.delete();
+        File file3 = new File("templates.json");
+        file3.delete();
+
     }
 }
 
