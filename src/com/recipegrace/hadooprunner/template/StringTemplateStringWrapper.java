@@ -28,8 +28,8 @@ public class StringTemplateStringWrapper {
         for (String key : properties.keySet()) {
             try {
                 st.add(key, properties.get(key));
-            }catch (IllegalArgumentException e){
-                throw new HadoopRunnerException("no such attribute: "+key);
+            } catch (IllegalArgumentException e) {
+                throw new HadoopRunnerException("no such attribute: " + key);
             }
         }
         if (st == null) throw new HadoopRunnerException("Templates missing");

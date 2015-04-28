@@ -68,7 +68,7 @@ public class TreeCellImpl extends TreeCell<String> {
                     TreeItem<String> parentItem = item.getParent();
                     try {
                         new JobRunner(console).run(item.getValue(), parentItem.getValue(), cluster);
-                    } catch (IOException | InterruptedException|HadoopRunnerException e) {
+                    } catch (IOException | InterruptedException | HadoopRunnerException e) {
                         console.appendToConsole(e);
                     }
                 }

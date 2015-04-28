@@ -29,7 +29,7 @@ public class JobRunner {
 
 
         console.clear();
-        String scriptPath = new ScriptGenerator(mainClass,job,cluster).generateScript();
+        String scriptPath = new ScriptGenerator(mainClass, job, cluster).generateScript();
         String[] command = {"/bin/bash", scriptPath, "Argument1"};
         ProcessBuilder builder = new ProcessBuilder(command);
         new Thread(new Runnable() {
