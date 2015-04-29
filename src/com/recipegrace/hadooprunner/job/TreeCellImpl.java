@@ -9,6 +9,7 @@ import com.recipegrace.hadooprunner.db.JobDAO;
 import com.recipegrace.hadooprunner.db.ProjectDAO;
 import com.recipegrace.hadooprunner.dialogs.ProjectDialog;
 import com.recipegrace.hadooprunner.main.Console;
+import com.recipegrace.hadooprunner.template.ScriptGenerator;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
@@ -67,7 +68,11 @@ public class TreeCellImpl extends TreeCell<String> {
                     TreeItem<String> item = getTreeItem();
                     TreeItem<String> parentItem = item.getParent();
                     try {
-                        new JobRunner(console).run(item.getValue(), parentItem.getValue(), cluster);
+                        String mainClass =item.getValue();
+                        String job = parentItem.getValue();
+
+                        String scriptPath = new ScriptGenerator(mainClass, job, cluster).generateScript();
+                        new RemoteScriptRunner(console, cluster).run(scriptPath);
                     } catch (IOException | InterruptedException | HadoopRunnerException e) {
                         console.appendToConsole(e);
                     }
