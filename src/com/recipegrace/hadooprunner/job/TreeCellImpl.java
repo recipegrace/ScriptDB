@@ -13,10 +13,14 @@ import com.recipegrace.hadooprunner.template.ScriptGenerator;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Service;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 import javafx.util.Pair;
+import org.controlsfx.dialog.Dialogs;
+import org.controlsfx.dialog.ProgressDialog;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -72,8 +76,15 @@ public class TreeCellImpl extends TreeCell<String> {
                         String job = parentItem.getValue();
 
                         String scriptPath = new ScriptGenerator(mainClass, job, cluster).generateScript();
-                        new RemoteScriptRunner(console, cluster).run(scriptPath);
-                    } catch (IOException | InterruptedException | HadoopRunnerException e) {
+                        Service<Void> service= new RemoteScriptRunner(console, cluster,scriptPath);
+
+                        ProgressDialog progDiag = new ProgressDialog(service);
+                        progDiag.setTitle("Running job");
+                        progDiag.initOwner(null);
+                        progDiag.setHeaderText("SSH job");
+                        progDiag.initModality(Modality.WINDOW_MODAL);
+                        service.start();
+                    } catch (IOException | HadoopRunnerException e) {
                         console.appendToConsole(e);
                     }
                 }
