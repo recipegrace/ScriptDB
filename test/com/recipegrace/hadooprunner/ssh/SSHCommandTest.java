@@ -24,7 +24,7 @@ public class SSHCommandTest extends BasicSSHTest {
         //    String command="scp " + (ptimestamp ? "-p" :"") +" -t "+".cbproperties";
         //   sshCommand2.execute(command);
         SSHCommand sshCommand = new SSHCommand(userName, hostName, passsWord);
-     //   sshCommand.execute("/bin/sh runOnHadoop.sh");
+        //   sshCommand.execute("/bin/sh runOnHadoop.sh");
         sshCommand.execute("ls");
     }
 

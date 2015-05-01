@@ -1,11 +1,12 @@
 package com.recipegrace.hadooprunner.job;
 
-import com.recipegrace.hadooprunner.core.Cluster;
 import com.recipegrace.hadooprunner.core.HadoopRunnerException;
 import com.recipegrace.hadooprunner.main.Console;
-import com.recipegrace.hadooprunner.template.ScriptGenerator;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,7 +47,7 @@ public class LocalScriptRunner {
                     StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), "ERROR", console);
 
                     // any output?
-                    StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), "OUTPUT",console);
+                    StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), "OUTPUT", console);
 
                     // start gobblers
                     outputGobbler.start();
@@ -64,7 +65,6 @@ public class LocalScriptRunner {
 
 
     }
-
 
 
 }

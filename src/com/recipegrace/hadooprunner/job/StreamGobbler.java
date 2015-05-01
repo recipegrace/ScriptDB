@@ -20,7 +20,7 @@ public class StreamGobbler extends Thread {
     public StreamGobbler(InputStream is, String type, Console console) {
         this.is = is;
         this.type = type;
-        this.console=console;
+        this.console = console;
     }
 
     @Override

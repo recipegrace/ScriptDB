@@ -2,52 +2,49 @@ package com.recipegrace.hadooprunner.job;
 
 import com.jcraft.jsch.*;
 import com.recipegrace.hadooprunner.core.Cluster;
-import com.recipegrace.hadooprunner.core.HadoopRunnerException;
 import com.recipegrace.hadooprunner.main.Console;
 import com.recipegrace.hadooprunner.ssh.NewUserInfo;
-import com.recipegrace.hadooprunner.ssh.SSHCommand;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by fjacob on 4/14/15.
  */
-public class RemoteScriptRunner<Void>  extends Service<Void>{
+public class RemoteScriptRunner<Void> extends Service<Void> {
 
     private Console console;
     private Cluster cluster;
     private String scriptPath;
+
     public RemoteScriptRunner(Console console, Cluster cluster, String scriptPath) {
         this.console = console;
-        this.cluster=cluster;
-        this.scriptPath=scriptPath;
+        this.cluster = cluster;
+        this.scriptPath = scriptPath;
     }
 
 
-/*
-    public void run(String scriptPath) throws IOException, InterruptedException, HadoopRunnerException {
+    /*
+        public void run(String scriptPath) throws IOException, InterruptedException, HadoopRunnerException {
 
 
-        console.clear();
-        new Thread(){
-            @Override
-            public void run() {
-                try {
-                    executeSSHCommand();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            console.clear();
+            new Thread(){
+                @Override
+                public void run() {
+                    try {
+                        executeSSHCommand();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }.start();
+            }.start();
 
-    }
+        }
 
-*/
+    */
     private void executeSSHCommand() throws IOException {
         try {
             JSch jsch = new JSch();
@@ -111,10 +108,11 @@ public class RemoteScriptRunner<Void>  extends Service<Void>{
         Platform.runLater(new Runnable() {
 
             public void run() {
-               console.appendToConsole(s);
+                console.appendToConsole(s);
             }
         });
     }
+
     private void appendToConsole(Exception ex) {
         Platform.runLater(new Runnable() {
 
@@ -123,8 +121,6 @@ public class RemoteScriptRunner<Void>  extends Service<Void>{
             }
         });
     }
-
-
 
 
     @Override
@@ -136,9 +132,10 @@ public class RemoteScriptRunner<Void>  extends Service<Void>{
                 transferFile(new File(scriptPath), "hola.sh");
                 updateProgress(1, 2);
                 executeSSHCommand();
-                updateProgress(1,2);
+                updateProgress(1, 2);
                 return null;
             }
+
             private void transferFile(File file, String outFile) throws IOException,
                     JSchException {
 
@@ -203,7 +200,7 @@ public class RemoteScriptRunner<Void>  extends Service<Void>{
                     return;
                 }
 
-                updateProgress(currentProgress++,totalProgress);
+                updateProgress(currentProgress++, totalProgress);
 
                 // send a content of lfile
                 fis = new FileInputStream(file);
@@ -215,7 +212,7 @@ public class RemoteScriptRunner<Void>  extends Service<Void>{
                     if (len <= 0)
                         break;
                     out.write(buf, 0, len); // out.flush();
-                    updateProgress(currentProgress++,totalProgress);
+                    updateProgress(currentProgress++, totalProgress);
 
                 }
                 fis.close();
@@ -232,6 +229,7 @@ public class RemoteScriptRunner<Void>  extends Service<Void>{
                 channel.disconnect();
                 session.disconnect();
             }
+
             private int checkAck(InputStream in) throws IOException {
                 int b = in.read();
                 // b may be 0 for success,
@@ -264,5 +262,5 @@ public class RemoteScriptRunner<Void>  extends Service<Void>{
     }
 
 
-    }
+}
 

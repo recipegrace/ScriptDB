@@ -19,7 +19,6 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.util.Pair;
-import org.controlsfx.dialog.Dialogs;
 import org.controlsfx.dialog.ProgressDialog;
 
 import java.io.FileNotFoundException;
@@ -72,11 +71,11 @@ public class TreeCellImpl extends TreeCell<String> {
                     TreeItem<String> item = getTreeItem();
                     TreeItem<String> parentItem = item.getParent();
                     try {
-                        String mainClass =item.getValue();
+                        String mainClass = item.getValue();
                         String job = parentItem.getValue();
 
                         String scriptPath = new ScriptGenerator(mainClass, job, cluster).generateScript();
-                        Service<Void> service= new RemoteScriptRunner(console, cluster,scriptPath);
+                        Service<Void> service = new RemoteScriptRunner(console, cluster, scriptPath);
 
                         ProgressDialog progDiag = new ProgressDialog(service);
                         progDiag.setTitle("Running job");
