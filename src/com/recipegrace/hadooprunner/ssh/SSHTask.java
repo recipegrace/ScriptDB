@@ -1,4 +1,4 @@
-package com.recipegrace.hadooprunner.job;
+package com.recipegrace.hadooprunner.ssh;
 
 import com.jcraft.jsch.*;
 import com.recipegrace.hadooprunner.core.Cluster;
@@ -11,14 +11,72 @@ import java.io.*;
 /**
  * Created by fjacob on 5/1/15.
  */
-abstract public class FileTransferTask<Void> extends Task<Void> {
+abstract public class SSHTask<Void> extends Task<Void> {
     protected Console console;
     protected Cluster cluster;
-    public FileTransferTask(Console console,Cluster cluster){
+    public SSHTask(Console console, Cluster cluster){
          this.console=console;
         this.cluster=cluster;
 
      }
+    protected void executeSSHCommand() throws IOException {
+        try {
+            JSch jsch = new JSch();
+
+            String command = "sh hola.sh";
+
+            Session session = jsch.getSession(cluster.getUserName(), cluster.getClusterName(), 22);
+
+            UserInfo ui = new NewUserInfo(cluster.getPassWord());
+            session.setUserInfo(ui);
+            session.connect();
+
+
+            Channel channel = session.openChannel("exec");
+            ((ChannelExec) channel).setCommand(command);
+
+            // X Forwarding
+            // channel.setXForwarding(true);
+
+            //channel.setInputStream(System.in);
+            channel.setInputStream(null);
+
+            //channel.setOutputStream(System.out);
+
+            //FileOutputStream fos=new FileOutputStream("/tmp/stderr");
+            //((ChannelExec)channel).setErrStream(fos);
+            ((ChannelExec) channel).setErrStream(System.err);
+
+            InputStream in = channel.getInputStream();
+
+            channel.connect();
+
+            byte[] tmp = new byte[1024];
+            while (true) {
+                while (in.available() > 0) {
+                    int i = in.read(tmp, 0, 1024);
+                    if (i < 0) break;
+                    console.appendToConsole(new String(tmp, 0, i));
+                    System.out.print(new String(tmp, 0, i));
+                }
+                if (channel.isClosed()) {
+                    if (in.available() > 0) continue;
+                    System.out.println("exit-status: " + channel.getExitStatus());
+                   console. appendToConsole("exit-status: " + channel.getExitStatus());
+                    break;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception ee) {
+                   console. appendToConsole(ee);
+                }
+            }
+            channel.disconnect();
+            session.disconnect();
+        } catch (JSchException e) {
+            console.appendToConsole(e);
+        }
+    }
     protected int checkAck(InputStream in) throws IOException {
         int b = in.read();
         // b may be 0 for success,

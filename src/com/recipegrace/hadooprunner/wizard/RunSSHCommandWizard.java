@@ -1,4 +1,4 @@
-package com.recipegrace.hadooprunner.dialogs;
+package com.recipegrace.hadooprunner.wizard;
 
 import com.recipegrace.hadooprunner.core.HadoopRunnerException;
 import com.recipegrace.hadooprunner.core.Template;
@@ -20,14 +20,14 @@ import java.util.stream.Collectors;
 /**
  * Created by fjacob on 4/17/15.
  */
-public class TemplateEditWizard extends Wizard {
+public class RunSSHCommandWizard extends Wizard {
 
     private TextField txtTemplateName;
     private TextArea txtTemplate;
     private ComboBox<String> cmbTemplates;
     private TemplateDAO tempDAO = new TemplateDAO();
 
-    public TemplateEditWizard(Console console) {
+    public RunSSHCommandWizard(Console console) {
         setTitle("Linear Wizard");
 
         // --- page 1
@@ -49,12 +49,12 @@ public class TemplateEditWizard extends Wizard {
         page1Grid.add(cmbTemplates, 1, row++);
 
 
-        Wizard.WizardPane page1 = new Wizard.WizardPane();
+        WizardPane page1 = new WizardPane();
         page1.setHeaderText("Please select the template to edit");
         page1.setContent(page1Grid);
 
         // --- page 2
-        final Wizard.WizardPane page2 = new Wizard.WizardPane() {
+        final WizardPane page2 = new WizardPane() {
             @Override
             public void onEnteringPage(Wizard wizard) {
 
@@ -73,7 +73,7 @@ public class TemplateEditWizard extends Wizard {
 
 
         // create wizard
-        LinearFlow flow = new Wizard.LinearFlow(page1, page2);
+        LinearFlow flow = new LinearFlow(page1, page2);
 
         setFlow(flow);
 
