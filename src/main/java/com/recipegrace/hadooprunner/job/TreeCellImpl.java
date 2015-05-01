@@ -65,43 +65,41 @@ public class TreeCellImpl extends TreeCell<String> {
 
         List<Cluster> clusters = clusterDAO.getAll();
         Menu menuRun = new Menu("Run on");
-        final ToggleGroup groupRun = new ToggleGroup();
+        //final ToggleGroup groupRun = new ToggleGroup();
         for (Cluster cluster : clusters) {
-            RadioMenuItem itemEffect = new RadioMenuItem(cluster.getClusterName());
+            MenuItem itemEffect = new MenuItem(cluster.getClusterName());
             itemEffect.setUserData(cluster);
-            itemEffect.setToggleGroup(groupRun);
+          //  itemEffect.setToggleGroup(groupRun);
+            itemEffect.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                        TreeItem<String> item = getTreeItem();
+                        TreeItem<String> parentItem = item.getParent();
+                        try {
+                            String mainClass = item.getValue();
+                            String job = parentItem.getValue();
+
+                            String scriptPath = new ScriptGenerator(mainClass, job).generateScript();
+                            Service<Void> service = new RemoteScriptRunner(console, cluster, scriptPath);
+
+                            ProgressDialog progDiag = new ProgressDialog(service);
+                            progDiag.setTitle("Running job");
+                            progDiag.initOwner(null);
+                            progDiag.setHeaderText("SSH job");
+                            progDiag.initModality(Modality.WINDOW_MODAL);
+                            service.start();
+                        } catch (IOException | HadoopRunnerException e) {
+                            console.appendToConsole(e);
+                        }
+                }
+        });
             menuRun.getItems().add(itemEffect);
+
         }
 //No Effects menu
 
 //Processing menu item selection
-        groupRun.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            public void changed(ObservableValue<? extends Toggle> ov,
-                                Toggle old_toggle, Toggle new_toggle) {
-                if (groupRun.getSelectedToggle() != null) {
-                    Cluster cluster =
-                            (Cluster) groupRun.getSelectedToggle().getUserData();
-                    TreeItem<String> item = getTreeItem();
-                    TreeItem<String> parentItem = item.getParent();
-                    try {
-                        String mainClass = item.getValue();
-                        String job = parentItem.getValue();
 
-                        String scriptPath = new ScriptGenerator(mainClass, job).generateScript();
-                        Service<Void> service = new RemoteScriptRunner(console, cluster, scriptPath);
-
-                        ProgressDialog progDiag = new ProgressDialog(service);
-                        progDiag.setTitle("Running job");
-                        progDiag.initOwner(null);
-                        progDiag.setHeaderText("SSH job");
-                        progDiag.initModality(Modality.WINDOW_MODAL);
-                        service.start();
-                    } catch (IOException | HadoopRunnerException e) {
-                        console.appendToConsole(e);
-                    }
-                }
-            }
-        });
 //Adding items to the Edit menu
         /*
         List<Cluster> clusters = clusterDAO.getAll();

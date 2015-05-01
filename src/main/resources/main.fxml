@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.geometry.Insets?>
@@ -107,6 +109,9 @@
         </TabPane>
     </center>
     <bottom>
-        <TextArea fx:id="consoleTextArea" prefHeight="157.0" prefWidth="679.0" BorderPane.alignment="CENTER" />
+        <TextArea fx:id="consoleTextArea" blendMode="EXCLUSION" editable="false" prefHeight="157.0" prefWidth="679.0" style="-fx-foreground-color: white; -fx-background-color: black;" BorderPane.alignment="CENTER">
+         <font>
+            <Font name="Serif Regular" size="12.0" />
+         </font></TextArea>
     </bottom>
 </BorderPane>

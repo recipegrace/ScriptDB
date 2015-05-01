@@ -56,11 +56,11 @@ abstract public class SSHTask<Void> extends Task<Void> {
                     int i = in.read(tmp, 0, 1024);
                     if (i < 0) break;
                     console.appendToConsole(new String(tmp, 0, i));
-                    System.out.print(new String(tmp, 0, i));
+                   // System.out.print(new String(tmp, 0, i));
                 }
                 if (channel.isClosed()) {
                     if (in.available() > 0) continue;
-                    System.out.println("exit-status: " + channel.getExitStatus());
+                  //  System.out.println("exit-status: " + channel.getExitStatus());
                    console. appendToConsole("exit-status: " + channel.getExitStatus());
                     break;
                 }
