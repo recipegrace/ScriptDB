@@ -1,6 +1,0 @@
-template1(executable,arguments,main,options,scaldingTool) ::=<<#!/bin/bash
-hadoop1 jar <executable> <scaldingTool><options:{u|-D<u.name>=<u.value> }><main> --hdfs <arguments:{u|--<u.name> <u.value> }>
->>
-template2(executable,arguments,main,options,scaldingTool) ::=<<#!/bin/bash
-hadoop2 jar <executable> <scaldingTool><options:{u|-D<u.name>=<u.value> }><main> --hdfs <arguments:{u|--<u.name> <u.value> }>
->>
