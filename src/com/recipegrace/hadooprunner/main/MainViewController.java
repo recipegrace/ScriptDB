@@ -8,6 +8,7 @@ import com.recipegrace.hadooprunner.db.TemplateDAO;
 import com.recipegrace.hadooprunner.dialogs.*;
 import com.recipegrace.hadooprunner.job.ButtonCell;
 import com.recipegrace.hadooprunner.job.TreeCellImpl;
+import com.recipegrace.hadooprunner.template.ScriptGenerator;
 import com.recipegrace.hadooprunner.template.StringTemplateStringWrapper;
 import com.sun.prism.impl.Disposer.Record;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -356,14 +357,12 @@ public class MainViewController {
     }
 
     public void openGeneratedScript(Event event) {
-        StringTemplateStringWrapper wrapperLocal = new StringTemplateStringWrapper("local", txtTemplateScript.getText());
-        StringTemplateStringWrapper wrapperRemote = new StringTemplateStringWrapper("remote", txtTemplateScript.getText());
-        Map<String, Object> map = new HashMap<String, Object>();
+
         try {
-            if (wrapperLocal == null || wrapperRemote == null) txtGeneratedScript.setText("Template missing");
-            txtGeneratedScript.setText(wrapperLocal.render(map) + "\n" + wrapperRemote.render(map));
-        } catch (IOException | HadoopRunnerException e) {
-            console.appendToConsole(e);
+            ScriptGenerator generator = new ScriptGenerator(txtMainClass.getText(), cmbProjects.getSelectionModel().getSelectedItem());
+            txtGeneratedScript.setText(generator.generateScriptText());
+        } catch (IOException|HadoopRunnerException e) {
+            e.printStackTrace();
         }
 
 

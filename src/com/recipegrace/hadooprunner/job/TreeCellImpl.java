@@ -74,7 +74,7 @@ public class TreeCellImpl extends TreeCell<String> {
                         String mainClass = item.getValue();
                         String job = parentItem.getValue();
 
-                        String scriptPath = new ScriptGenerator(mainClass, job, cluster).generateScript();
+                        String scriptPath = new ScriptGenerator(mainClass, job).generateScript();
                         Service<Void> service = new RemoteScriptRunner(console, cluster, scriptPath);
 
                         ProgressDialog progDiag = new ProgressDialog(service);

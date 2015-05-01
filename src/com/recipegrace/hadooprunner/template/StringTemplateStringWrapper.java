@@ -27,6 +27,8 @@ public class StringTemplateStringWrapper {
         ST st = group.getInstanceOf(templateInstance);
         for (String key : properties.keySet()) {
             try {
+
+                if(st==null) throw new HadoopRunnerException("Check the template format");
                 st.add(key, properties.get(key));
             } catch (IllegalArgumentException e) {
                 throw new HadoopRunnerException("no such attribute: " + key);

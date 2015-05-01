@@ -27,18 +27,24 @@ public class ScriptGenerator {
     private String mainClass;
     private Project project;
     private Job job;
-    private Cluster cluster;
     private String template;
 
-    public ScriptGenerator(String mainClass, String projectName, Cluster cluster) throws FileNotFoundException {
+    public ScriptGenerator(String mainClass, String projectName) throws FileNotFoundException {
         this.mainClass = mainClass;
         this.project = new ProjectDAO().getProject(projectName);
         this.job = new JobDAO().getJob(projectName, mainClass);
         this.template = new TemplateDAO().getTemplate(job.getTemplateName()).getTemplate();
-        this.cluster = cluster;
     }
 
     public String generateScript() throws IOException, HadoopRunnerException {
+        String output = generateScriptText();
+        Path outputPath = Paths.get("template" + System.currentTimeMillis());
+
+        Files.write(outputPath, output.getBytes());
+        return outputPath.toAbsolutePath().toString();
+    }
+
+    public String generateScriptText() throws IOException, HadoopRunnerException {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("mainclass", mainClass);
         map.put("jarname", project.getJarName());
@@ -47,11 +53,7 @@ public class ScriptGenerator {
         addOptions(map);
         addArguments(map);
         StringTemplateStringWrapper wrapper1 = new StringTemplateStringWrapper("template1", template);
-        String output = wrapper1.render(map);
-        Path outputPath = Paths.get("template" + System.currentTimeMillis());
-
-        Files.write(outputPath, output.getBytes());
-        return outputPath.toAbsolutePath().toString();
+        return wrapper1.render(map);
     }
 
     private void addOptions(Map<String, Object> map) {
