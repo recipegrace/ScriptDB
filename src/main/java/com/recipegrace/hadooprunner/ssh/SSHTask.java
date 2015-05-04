@@ -40,42 +40,48 @@ abstract public class SSHTask<Void> extends Task<Void> {
             //channel.setInputStream(System.in);
             channel.setInputStream(null);
 
-            //channel.setOutputStream(System.out);
 
             //FileOutputStream fos=new FileOutputStream("/tmp/stderr");
             //((ChannelExec)channel).setErrStream(fos);
             ((ChannelExec) channel).setErrStream(System.err);
 
             InputStream in = channel.getInputStream();
+            InputStream err = ((ChannelExec) channel).getErrStream();
 
             channel.connect();
 
             byte[] tmp = new byte[1024];
-            while (true) {
-                while (in.available() > 0) {
-                    int i = in.read(tmp, 0, 1024);
-                    if (i < 0) break;
-                    console.appendToConsole(new String(tmp, 0, i));
-                   // System.out.print(new String(tmp, 0, i));
-                }
-                if (channel.isClosed()) {
-                    if (in.available() > 0) continue;
-                  //  System.out.println("exit-status: " + channel.getExitStatus());
-                   console. appendToConsole("exit-status: " + channel.getExitStatus());
-                    break;
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception ee) {
-                   console. appendToConsole(ee);
-                }
-            }
+            addToConsole(channel, in, tmp);
+            addToConsole(channel, err, tmp);
+
             channel.disconnect();
             session.disconnect();
         } catch (JSchException e) {
             console.appendToConsole(e);
         }
     }
+
+    private void addToConsole(Channel channel, InputStream in, byte[] tmp) throws IOException {
+        while (true) {
+            while (in.available() > 0) {
+                int i = in.read(tmp, 0, 1024);
+                if (i < 0) break;
+                console.appendToConsole(new String(tmp, 0, i));
+            }
+            if (channel.isClosed()) {
+                if (in.available() > 0) continue;
+               //console. appendToConsole("exit-status: " + channel.getExitStatus());
+                break;
+
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (Exception ee) {
+               console. appendToConsole(ee);
+            }
+        }
+    }
+
     protected int checkAck(InputStream in) throws IOException {
         int b = in.read();
         // b may be 0 for success,
@@ -250,7 +256,6 @@ abstract public class SSHTask<Void> extends Task<Void> {
                 }
             }
 
-            // System.out.println("filesize="+filesize+", file="+file);
 
             // send '\0'
             buf[0] = 0;

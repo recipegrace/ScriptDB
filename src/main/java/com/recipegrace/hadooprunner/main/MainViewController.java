@@ -363,7 +363,7 @@ public class MainViewController {
             ScriptGenerator generator = new ScriptGenerator(txtMainClass.getText(), cmbProjects.getSelectionModel().getSelectedItem());
             txtGeneratedScript.setText(generator.generateScriptText());
         } catch (IOException|HadoopRunnerException e) {
-            e.printStackTrace();
+            console.appendToConsole(e);
         }
 
 

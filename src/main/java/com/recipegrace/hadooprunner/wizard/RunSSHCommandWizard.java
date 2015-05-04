@@ -38,20 +38,20 @@ public class RunSSHCommandWizard extends Wizard {
         page1Grid.setVgap(10);
         page1Grid.setHgap(10);
 
-        page1Grid.add(new Label("Template name:"), 0, row);
+        page1Grid.add(new Label("Cluster name:"), 0, row);
         try {
             cmbTemplates = createClusterCombo();
         } catch (FileNotFoundException e) {
             console.appendToConsole(e);
         }
-        cmbTemplates.setId("templateNames");
-        getValidationSupport().registerValidator(cmbTemplates, Validator.createEmptyValidator(" Template is mandatory"));
+        cmbTemplates.setId("clusterNames");
+        getValidationSupport().registerValidator(cmbTemplates, Validator.createEmptyValidator(" Cluster name is mandatory"));
 
         page1Grid.add(cmbTemplates, 1, row++);
 
 
         WizardPane page1 = new WizardPane();
-        page1.setHeaderText("Please select the template to edit");
+        page1.setHeaderText("Please select the cluster to run");
         page1.setContent(page1Grid);
 
         // --- page 2
@@ -77,6 +77,8 @@ public class RunSSHCommandWizard extends Wizard {
                     progDiag.setHeaderText("SSH job");
                     progDiag.initModality(Modality.WINDOW_MODAL);
                     service.start();
+
+
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -92,8 +94,8 @@ public class RunSSHCommandWizard extends Wizard {
     private ComboBox<String> createClusterCombo() throws FileNotFoundException {
         ComboBox<String> cmbClusters = new ComboBox<String>();
 
-        List<String> templateNames = clusterDAO.getAll().stream().map(f -> f.getClusterName()).collect(Collectors.toList());
-        cmbClusters.setItems(FXCollections.observableList(templateNames));
+        List<String> clusterNames = clusterDAO.getAll().stream().map(f -> f.getClusterName()).collect(Collectors.toList());
+        cmbClusters.setItems(FXCollections.observableList(clusterNames));
         return cmbClusters;
     }
 
@@ -108,7 +110,7 @@ public class RunSSHCommandWizard extends Wizard {
         grid.add(new Label("Command to execute"), 0, 0);
         grid.add(txtCommand, 1, 0);
 
-        txtCommand.setId("templateName");
+        txtCommand.setId("clusterName");
         return grid;
     }
 }

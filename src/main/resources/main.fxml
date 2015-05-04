@@ -100,7 +100,7 @@
                     <content>
                         <BorderPane prefHeight="200.0" prefWidth="200.0">
                             <center>
-                                <TextArea fx:id="txtGeneratedScript" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                                <TextArea fx:id="txtGeneratedScript" editable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
                             </center>
                         </BorderPane>
                     </content>
@@ -111,7 +111,7 @@
     <bottom>
         <TextArea fx:id="consoleTextArea" blendMode="EXCLUSION" editable="false" prefHeight="157.0" prefWidth="679.0" style="-fx-foreground-color: white; -fx-background-color: black;" BorderPane.alignment="CENTER">
          <font>
-            <Font name="Serif Regular" size="12.0" />
+            <Font name="Courier" size="14.0" />
          </font></TextArea>
     </bottom>
 </BorderPane>
