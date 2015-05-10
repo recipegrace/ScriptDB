@@ -1,4 +1,4 @@
-package com.recipegrace.hadooprunner.dialogs;
+package com.recipegrace.hadooprunner.wizard;
 
 import com.recipegrace.hadooprunner.core.HadoopRunnerException;
 import com.recipegrace.hadooprunner.core.Template;
@@ -28,7 +28,7 @@ public class TemplateEditWizard extends Wizard {
     private TemplateDAO tempDAO = new TemplateDAO();
 
     public TemplateEditWizard(Console console) {
-        setTitle("Linear Wizard");
+        setTitle("Edit Template Wizard");
 
         // --- page 1
         int row = 0;

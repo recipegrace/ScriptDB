@@ -13,3 +13,5 @@ db/
 .DS_Store
 out/
 .tests/
+target/
+dependency-reduced-pom.xml

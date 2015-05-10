@@ -9,7 +9,8 @@ import com.recipegrace.hadooprunner.dialogs.*;
 import com.recipegrace.hadooprunner.job.ButtonCell;
 import com.recipegrace.hadooprunner.job.TreeCellImpl;
 import com.recipegrace.hadooprunner.template.ScriptGenerator;
-import com.recipegrace.hadooprunner.template.StringTemplateStringWrapper;
+import com.recipegrace.hadooprunner.wizard.RunSSHCommandWizard;
+import com.recipegrace.hadooprunner.wizard.TemplateEditWizard;
 import com.sun.prism.impl.Disposer.Record;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -362,7 +363,7 @@ public class MainViewController {
             ScriptGenerator generator = new ScriptGenerator(txtMainClass.getText(), cmbProjects.getSelectionModel().getSelectedItem());
             txtGeneratedScript.setText(generator.generateScriptText());
         } catch (IOException|HadoopRunnerException e) {
-            e.printStackTrace();
+            console.appendToConsole(e);
         }
 
 
@@ -385,5 +386,9 @@ public class MainViewController {
                 console.appendToConsole(e.getMessage());
             }
         });
+    }
+
+    public void runCommand(ActionEvent actionEvent) {
+        RunSSHCommandWizard wizard= new RunSSHCommandWizard(console);
     }
 }
