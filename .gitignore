@@ -14,3 +14,4 @@ db/
 out/
 .tests/
 target/
+dependency-reduced-pom.xml
