@@ -389,6 +389,10 @@ public class MainViewController {
     }
 
     public void runCommand(ActionEvent actionEvent) {
-        RunSSHCommandWizard wizard= new RunSSHCommandWizard(console);
+        try {
+            RunSSHCommandWizard wizard= new RunSSHCommandWizard(console);
+        } catch (FileNotFoundException e) {
+            console.appendToConsole(e);
+        }
     }
 }
