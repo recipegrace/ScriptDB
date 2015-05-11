@@ -1,9 +1,14 @@
 package com.recipegrace.hadooprunner.wizard;
 
 import com.recipegrace.hadooprunner.core.Cluster;
+import com.recipegrace.hadooprunner.core.Command;
+import com.recipegrace.hadooprunner.core.HadoopRunnerException;
 import com.recipegrace.hadooprunner.db.ClusterDAO;
+import com.recipegrace.hadooprunner.db.CommandDAO;
 import com.recipegrace.hadooprunner.job.RemoteCommandRunner;
 import com.recipegrace.hadooprunner.main.Console;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Service;
 import javafx.geometry.Insets;
@@ -15,6 +20,7 @@ import org.controlsfx.dialog.Wizard;
 import org.controlsfx.validation.Validator;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,12 +29,12 @@ import java.util.stream.Collectors;
  */
 public class RunSSHCommandWizard extends Wizard {
 
-    private TextField txtCommand;
+    private ComboBox<String> cmbCommand;
 
     private ComboBox<String> cmbTemplates;
     private ClusterDAO clusterDAO = new ClusterDAO();
 
-    public RunSSHCommandWizard(Console console) {
+    public RunSSHCommandWizard(Console console) throws FileNotFoundException {
         setTitle("Execute SSH Command Wizard");
 
         // --- page 1
@@ -69,7 +75,7 @@ public class RunSSHCommandWizard extends Wizard {
             if (result == ButtonType.FINISH) {
                 try {
                     Cluster cluter = clusterDAO.getCluster(cmbTemplates.getSelectionModel().getSelectedItem());
-                    Service<Void> service = new RemoteCommandRunner<Void>(console,cluter, txtCommand.getText());
+                    Service<Void> service = new RemoteCommandRunner<Void>(console,cluter, cmbCommand.getSelectionModel().getSelectedItem());
 
                     ProgressDialog progDiag = new ProgressDialog(service);
                     progDiag.setTitle("Running job");
@@ -99,18 +105,33 @@ public class RunSSHCommandWizard extends Wizard {
         return cmbClusters;
     }
 
-    private GridPane getCommandGridPane() {
+    CommandDAO commandDAO = new CommandDAO();
+    private GridPane getCommandGridPane() throws FileNotFoundException {
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
 
-        txtCommand = new TextField();
-
+        cmbCommand = new ComboBox<String>();
+        List<String> commands = commandDAO.getAll().stream().map(f -> f.getCommmand()).collect(Collectors.toList());
+        cmbCommand.setItems(FXCollections.observableList(commands));
+        cmbCommand.setEditable(true);
+        cmbCommand.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
+                try {
+                    commandDAO.createCommand(new Command(t1));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (HadoopRunnerException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         grid.add(new Label("Command to execute"), 0, 0);
-        grid.add(txtCommand, 1, 0);
+        grid.add(cmbCommand, 1, 0);
 
-        txtCommand.setId("clusterName");
+        cmbCommand.setId("clusterName");
         return grid;
     }
 }
