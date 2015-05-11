@@ -1,0 +1,9 @@
+te1(mainclass,arguments,jarname,options, projectname,projectlocation) ::=<<
+ #!/bin/bash
+ cd /home/fjacob.site/Recruitment-Edge/scalding/Edge
+ /home/fjacob.site/sbt/bin/sbt clean assembly
+ sudo -u dataservices kinit -k -t /home/dataservices/krb5.keytab svcDataServicesJobs@ATL.CAREERBUILDER.COM
+ chmod a+r target/scala-2.11/EdgeHadoop-job.jar
+ sudo -u dataservices sh -c "hadoop jar /home/fjacob.site/Recruitment-Edge/scalding/Edge/target/scala-2.11/EdgeHadoop-job.jar com.careerbuilder.edge.main.JobRunner com.careerbuilder.edge.common.MergeFiles --hdfs --input countout --output seqoutput 2> /tmp/error >/tmp/out &"
+ echo "submitted job"
+ >>
