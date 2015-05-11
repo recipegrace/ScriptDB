@@ -1,4 +1,4 @@
-db/
+.db/
 # Eclipse
 .classpath
 .project
