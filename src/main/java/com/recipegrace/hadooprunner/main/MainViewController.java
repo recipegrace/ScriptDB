@@ -5,7 +5,10 @@ import com.recipegrace.hadooprunner.db.ClusterDAO;
 import com.recipegrace.hadooprunner.db.JobDAO;
 import com.recipegrace.hadooprunner.db.ProjectDAO;
 import com.recipegrace.hadooprunner.db.TemplateDAO;
-import com.recipegrace.hadooprunner.dialogs.*;
+import com.recipegrace.hadooprunner.dialogs.ClusterDialog;
+import com.recipegrace.hadooprunner.dialogs.KeyValueDialog;
+import com.recipegrace.hadooprunner.dialogs.ProjectDialog;
+import com.recipegrace.hadooprunner.dialogs.TemplateAddDialog;
 import com.recipegrace.hadooprunner.job.ButtonCell;
 import com.recipegrace.hadooprunner.job.TreeCellImpl;
 import com.recipegrace.hadooprunner.template.ScriptGenerator;
@@ -362,7 +365,7 @@ public class MainViewController {
         try {
             ScriptGenerator generator = new ScriptGenerator(txtMainClass.getText(), cmbProjects.getSelectionModel().getSelectedItem());
             txtGeneratedScript.setText(generator.generateScriptText());
-        } catch (IOException|HadoopRunnerException e) {
+        } catch (IOException | HadoopRunnerException e) {
             console.appendToConsole(e);
         }
 
@@ -390,7 +393,7 @@ public class MainViewController {
 
     public void runCommand(ActionEvent actionEvent) {
         try {
-            RunSSHCommandWizard wizard= new RunSSHCommandWizard(console);
+            RunSSHCommandWizard wizard = new RunSSHCommandWizard(console);
         } catch (FileNotFoundException e) {
             console.appendToConsole(e);
         }

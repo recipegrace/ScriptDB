@@ -3,7 +3,6 @@ package com.recipegrace.hadooprunner.ssh;
 import com.jcraft.jsch.*;
 import com.recipegrace.hadooprunner.core.Cluster;
 import com.recipegrace.hadooprunner.main.Console;
-import com.recipegrace.hadooprunner.ssh.NewUserInfo;
 import javafx.concurrent.Task;
 
 import java.io.*;
@@ -14,11 +13,13 @@ import java.io.*;
 abstract public class SSHTask<Void> extends Task<Void> {
     protected Console console;
     protected Cluster cluster;
-    public SSHTask(Console console, Cluster cluster){
-         this.console=console;
-        this.cluster=cluster;
 
-     }
+    public SSHTask(Console console, Cluster cluster) {
+        this.console = console;
+        this.cluster = cluster;
+
+    }
+
     protected void executeSSHCommand(String command) throws IOException {
         try {
             JSch jsch = new JSch();
@@ -70,14 +71,14 @@ abstract public class SSHTask<Void> extends Task<Void> {
             }
             if (channel.isClosed()) {
                 if (in.available() > 0) continue;
-               //console. appendToConsole("exit-status: " + channel.getExitStatus());
+                //console. appendToConsole("exit-status: " + channel.getExitStatus());
                 break;
 
             }
             try {
                 Thread.sleep(1000);
             } catch (Exception ee) {
-               console. appendToConsole(ee);
+                console.appendToConsole(ee);
             }
         }
     }
@@ -109,6 +110,7 @@ abstract public class SSHTask<Void> extends Task<Void> {
         }
         return b;
     }
+
     protected void transferFileToServer(File file, String outFile) throws IOException,
             JSchException {
 
@@ -199,6 +201,7 @@ abstract public class SSHTask<Void> extends Task<Void> {
         channel.disconnect();
         session.disconnect();
     }
+
     protected File transferFromServer(String serverPath, String localFilePath)
             throws IOException, JSchException {
         JSch jsch = new JSch();

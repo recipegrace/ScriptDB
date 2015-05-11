@@ -12,7 +12,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Service;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import org.controlsfx.dialog.ProgressDialog;
@@ -75,7 +77,7 @@ public class RunSSHCommandWizard extends Wizard {
             if (result == ButtonType.FINISH) {
                 try {
                     Cluster cluter = clusterDAO.getCluster(cmbTemplates.getSelectionModel().getSelectedItem());
-                    Service<Void> service = new RemoteCommandRunner<Void>(console,cluter, cmbCommand.getSelectionModel().getSelectedItem());
+                    Service<Void> service = new RemoteCommandRunner<Void>(console, cluter, cmbCommand.getSelectionModel().getSelectedItem());
 
                     ProgressDialog progDiag = new ProgressDialog(service);
                     progDiag.setTitle("Running job");
@@ -106,6 +108,7 @@ public class RunSSHCommandWizard extends Wizard {
     }
 
     CommandDAO commandDAO = new CommandDAO();
+
     private GridPane getCommandGridPane() throws FileNotFoundException {
         GridPane grid = new GridPane();
         grid.setHgap(10);

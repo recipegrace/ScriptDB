@@ -9,7 +9,6 @@ public class Command {
     }
 
 
-
     private String commmand;
 
     public Long getCreatedTime() {
@@ -17,11 +16,10 @@ public class Command {
     }
 
 
-
     private Long createdTime;
 
     public Command(String command) {
-        this.commmand=command;
-        this.createdTime=System.currentTimeMillis();
+        this.commmand = command;
+        this.createdTime = System.currentTimeMillis();
     }
 }

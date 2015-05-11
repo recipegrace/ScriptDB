@@ -1,6 +1,5 @@
 package com.recipegrace.hadooprunner.template;
 
-import com.recipegrace.hadooprunner.core.Cluster;
 import com.recipegrace.hadooprunner.core.HadoopRunnerException;
 import com.recipegrace.hadooprunner.core.Job;
 import com.recipegrace.hadooprunner.core.Project;

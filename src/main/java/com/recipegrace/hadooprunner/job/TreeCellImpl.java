@@ -11,9 +11,7 @@ import com.recipegrace.hadooprunner.dialogs.ProjectDialog;
 import com.recipegrace.hadooprunner.main.Console;
 import com.recipegrace.hadooprunner.template.ScriptGenerator;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableStringValue;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Service;
 import javafx.event.ActionEvent;
@@ -69,30 +67,30 @@ public class TreeCellImpl extends TreeCell<String> {
         for (Cluster cluster : clusters) {
             MenuItem itemEffect = new MenuItem(cluster.getClusterName());
             itemEffect.setUserData(cluster);
-          //  itemEffect.setToggleGroup(groupRun);
+            //  itemEffect.setToggleGroup(groupRun);
             itemEffect.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                        TreeItem<String> item = getTreeItem();
-                        TreeItem<String> parentItem = item.getParent();
-                        try {
-                            String mainClass = item.getValue();
-                            String job = parentItem.getValue();
+                    TreeItem<String> item = getTreeItem();
+                    TreeItem<String> parentItem = item.getParent();
+                    try {
+                        String mainClass = item.getValue();
+                        String job = parentItem.getValue();
 
-                            String scriptPath = new ScriptGenerator(mainClass, job).generateScript();
-                            Service<Void> service = new RemoteScriptRunner(console, cluster, scriptPath);
+                        String scriptPath = new ScriptGenerator(mainClass, job).generateScript();
+                        Service<Void> service = new RemoteScriptRunner(console, cluster, scriptPath);
 
-                            ProgressDialog progDiag = new ProgressDialog(service);
-                            progDiag.setTitle("Running job");
-                            progDiag.initOwner(null);
-                            progDiag.setHeaderText("SSH job");
-                            progDiag.initModality(Modality.WINDOW_MODAL);
-                            service.start();
-                        } catch (IOException | HadoopRunnerException e) {
-                            console.appendToConsole(e);
-                        }
+                        ProgressDialog progDiag = new ProgressDialog(service);
+                        progDiag.setTitle("Running job");
+                        progDiag.initOwner(null);
+                        progDiag.setHeaderText("SSH job");
+                        progDiag.initModality(Modality.WINDOW_MODAL);
+                        service.start();
+                    } catch (IOException | HadoopRunnerException e) {
+                        console.appendToConsole(e);
+                    }
                 }
-        });
+            });
             menuRun.getItems().add(itemEffect);
 
         }
@@ -130,7 +128,7 @@ public class TreeCellImpl extends TreeCell<String> {
                 }
             });
             */
-            runMenu.getItems().add(menuRun);
+        runMenu.getItems().add(menuRun);
 
     }
 

@@ -6,8 +6,6 @@ import com.recipegrace.hadooprunner.ssh.SSHTask;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
-import java.io.File;
-
 /**
  * Created by fjacob on 4/14/15.
  */
@@ -24,8 +22,6 @@ public class RemoteCommandRunner<Void> extends Service<Void> {
     }
 
 
-
-
     @Override
     protected Task createTask() {
         return new SSHTask(console, cluster) {
@@ -36,7 +32,6 @@ public class RemoteCommandRunner<Void> extends Service<Void> {
                 updateProgress(1, 1);
                 return null;
             }
-
 
 
         };
