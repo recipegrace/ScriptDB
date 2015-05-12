@@ -74,7 +74,7 @@ public class ProjectDialog extends Dialog<Project> {
             loginButton.setDisable(newValue.trim().isEmpty());
         });
         txtProjectLocation.textProperty().addListener((observable, oldValue, newValue) -> {
-            loginButton.setDisable(!new File(newValue.trim()).exists());
+            loginButton.setDisable(newValue.trim().isEmpty());
         });
         txtJarName.textProperty().addListener((observable, oldValue, newValue) -> {
             loginButton.setDisable(newValue.trim().isEmpty());
