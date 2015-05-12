@@ -59,4 +59,6 @@ public class ClusterDAO extends AbstractDAO<Cluster> {
         return new TypeToken<ArrayList<Cluster>>() {
         }.getType();
     }
+
+    
 }

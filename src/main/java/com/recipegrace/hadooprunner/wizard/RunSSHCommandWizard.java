@@ -23,8 +23,13 @@ import org.controlsfx.validation.Validator;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeSet;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by fjacob on 4/17/15.
@@ -33,7 +38,7 @@ public class RunSSHCommandWizard extends Wizard {
 
     private ComboBox<String> cmbCommand;
 
-    private ComboBox<String> cmbTemplates;
+    private ComboBox<Pair>  cmbTemplates;
     private ClusterDAO clusterDAO = new ClusterDAO();
 
     public RunSSHCommandWizard(Console console) throws FileNotFoundException {
@@ -76,7 +81,7 @@ public class RunSSHCommandWizard extends Wizard {
         showAndWait().ifPresent(result -> {
             if (result == ButtonType.FINISH) {
                 try {
-                    Cluster cluter = clusterDAO.getCluster(cmbTemplates.getSelectionModel().getSelectedItem());
+                    Cluster cluter = clusterDAO.getCluster(cmbTemplates.getSelectionModel().getSelectedItem().getFullName());
                     Service<Void> service = new RemoteCommandRunner<Void>(console, cluter, cmbCommand.getSelectionModel().getSelectedItem());
 
                     ProgressDialog progDiag = new ProgressDialog(service);
@@ -99,17 +104,21 @@ public class RunSSHCommandWizard extends Wizard {
 
     }
 
-    private ComboBox<String> createClusterCombo() throws FileNotFoundException {
-        ComboBox<String> cmbClusters = new ComboBox<String>();
+    private ComboBox<Pair> createClusterCombo() throws FileNotFoundException {
+        ComboBox<Pair>  cmbClusters = new ComboBox<Pair> ();
 
-        List<String> clusterNames = clusterDAO.getAll().stream().map(f -> f.getClusterName()).collect(Collectors.toList());
+
+        List<Pair> clusterNames = clusterDAO
+                .getAll().stream().map(f -> new Pair(f.getClusterName()))
+                .collect(Collectors.toList());
         cmbClusters.setItems(FXCollections.observableList(clusterNames));
         return cmbClusters;
     }
 
+
     CommandDAO commandDAO = new CommandDAO();
 
-    private GridPane getCommandGridPane() throws FileNotFoundException {
+    private GridPane getCommandGridPane() throws FileNotFoundException   {
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);

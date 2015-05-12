@@ -69,7 +69,8 @@ public class TreeCellImpl extends TreeCell<NavigatorTreeContent> {
         Menu menuRun = new Menu("Run on");
         //final ToggleGroup groupRun = new ToggleGroup();
         for (Cluster cluster : clusters) {
-            MenuItem itemEffect = new MenuItem(cluster.getClusterName());
+
+            MenuItem itemEffect = new MenuItem(new com.recipegrace.hadooprunner.wizard.Pair("").shorten(cluster.getClusterName()));
             itemEffect.setUserData(cluster);
             //  itemEffect.setToggleGroup(groupRun);
             itemEffect.setOnAction(new EventHandler<ActionEvent>() {
@@ -197,11 +198,6 @@ public class TreeCellImpl extends TreeCell<NavigatorTreeContent> {
                 setContextMenu(runMenu);
             } else if (getTreeItem().getParent() != null) setContextMenu(addMenu);
 
-            //if (
-            //       !getTreeItem().isLeaf()&&getTreeItem().getParent()!= null
-            //      ){
-            //setContextMenu(addMenu);
-            // }
         }
     }
 
