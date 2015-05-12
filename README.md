@@ -20,8 +20,8 @@ What is not there in TailorSwift?
 <a href="https://github.com/feroshjacob/TailorSwift">TailorSwift</a> was designed with the similar motivation but the main limitation was the Eclipse IDE. In addition to this, the
 ScriptDB is using a sophisticated template engine, hence the scripts can be in any language (e.g., Python, Bash)
 
-An example demo showing how to submit a job in CB cluster is given below 
-[![ScreenShot](https://github.com/feroshjacob/TailorSwift/blob/master/resources/youtube.png)](http://youtu.be/3cMv6viuwW0)
+An example demo showing how to submit a job in CB cluster is given below
+[![ScreenShot](https://github.com/feroshjacob/scriptdb/blob/master/doc/youtube.png)](http://youtu.be/3cMv6viuwW0)
 
 
 
