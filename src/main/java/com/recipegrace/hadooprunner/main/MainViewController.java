@@ -365,7 +365,7 @@ public class MainViewController {
         try {
             ScriptGenerator generator = new ScriptGenerator(txtMainClass.getText(), cmbProjects.getSelectionModel().getSelectedItem());
             txtGeneratedScript.setText(generator.generateScriptText());
-        } catch (IOException | HadoopRunnerException e) {
+        } catch (IOException | HadoopRunnerException |NullPointerException e) {
             console.appendToConsole(e);
         }
 
@@ -395,6 +395,20 @@ public class MainViewController {
         try {
             RunSSHCommandWizard wizard = new RunSSHCommandWizard(console);
         } catch (FileNotFoundException e) {
+            console.appendToConsole(e);
+        }
+    }
+
+    TemplateDAO tempDAO = new TemplateDAO();
+
+    public void saveTemplate(ActionEvent actionEvent) {
+        Template template = new Template();
+        template.setTemplateName(cmbTemplates.getSelectionModel().getSelectedItem());
+        template.setTemplate(txtTemplateScript.getText());
+        try {
+            tempDAO.saveTemplate(template);
+            console.appendToConsole("template " + template.getTemplateName()+ " saved");
+        } catch (IOException | HadoopRunnerException e) {
             console.appendToConsole(e);
         }
     }
