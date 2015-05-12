@@ -1,4 +1,4 @@
-package com.recipegrace.hadooprunner.job;
+package com.recipegrace.hadooprunner.tree;
 
 import com.recipegrace.hadooprunner.core.Cluster;
 import com.recipegrace.hadooprunner.core.HadoopRunnerException;
@@ -8,6 +8,7 @@ import com.recipegrace.hadooprunner.db.ClusterDAO;
 import com.recipegrace.hadooprunner.db.JobDAO;
 import com.recipegrace.hadooprunner.db.ProjectDAO;
 import com.recipegrace.hadooprunner.dialogs.ProjectDialog;
+import com.recipegrace.hadooprunner.job.RemoteScriptRunner;
 import com.recipegrace.hadooprunner.main.Console;
 import com.recipegrace.hadooprunner.template.ScriptGenerator;
 import javafx.beans.property.SimpleStringProperty;
@@ -28,17 +29,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.recipegrace.hadooprunner.main.MainViewController.ROOT_TREE_NODE;
 
 /**
  * Created by fjacob on 4/12/15.
  */
-public class TreeCellImpl extends TreeCell<String> {
+public class TreeCellImpl extends TreeCell<NavigatorTreeContent> {
 
     private ContextMenu addMenu = new ContextMenu();
     private ContextMenu runMenu = new ContextMenu();
     private ClusterDAO clusterDAO = new ClusterDAO();
 
+
+    private boolean isRoot(NavigatorTreeContent navigatorTreeContent) {
+      return navigatorTreeContent .getType().equals(NavigatorTreeContent.TreeItemType.root);
+    }
     private void createMenu() throws FileNotFoundException {
         MenuItem addMenuItem = new MenuItem("Edit");
         addMenu.getItems().add(addMenuItem);
@@ -46,12 +50,12 @@ public class TreeCellImpl extends TreeCell<String> {
             @Override
             public void handle(ActionEvent event) {
 
-                TreeItem<String> item = getTreeItem();
-                if (item.getParent() != null && item.getParent().getValue().equals(ROOT_TREE_NODE)) {
+                TreeItem<NavigatorTreeContent> item = getTreeItem();
+                if (item.getParent() != null && isRoot(item.getParent().getValue())) {
 
                     editProject();
 
-                } else if (item.getParent() != null && !item.getParent().getValue().equals(ROOT_TREE_NODE)) {
+                } else if (item.getParent() != null && !isRoot(item.getParent().getValue())) {
                     editJob();
                 }
             }
@@ -71,11 +75,11 @@ public class TreeCellImpl extends TreeCell<String> {
             itemEffect.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    TreeItem<String> item = getTreeItem();
-                    TreeItem<String> parentItem = item.getParent();
+                    TreeItem<NavigatorTreeContent> item = getTreeItem();
+                    TreeItem<NavigatorTreeContent> parentItem = item.getParent();
                     try {
-                        String mainClass = item.getValue();
-                        String job = parentItem.getValue();
+                        String mainClass = item.getValue().getFullName();
+                        String job = parentItem.getValue().getFullName();
 
                         String scriptPath = new ScriptGenerator(mainClass, job).generateScript();
                         Service<Void> service = new RemoteScriptRunner(console, cluster, scriptPath);
@@ -94,48 +98,15 @@ public class TreeCellImpl extends TreeCell<String> {
             menuRun.getItems().add(itemEffect);
 
         }
-//No Effects menu
 
-//Processing menu item selection
-
-//Adding items to the Edit menu
-        /*
-        List<Cluster> clusters = clusterDAO.getAll();
-
-        for (Cluster cluster : clusters) {
-            MenuItem runMenuItem = new MenuItem( cluster.getClusterName().split("\\.")[0]);
-            runMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    TreeItem<String> item = getTreeItem();
-                    TreeItem<String> parentItem = item.getParent();
-                    try {
-                        String mainClass = item.getValue();
-                        String job = parentItem.getValue();
-
-                        String scriptPath = new ScriptGenerator(mainClass, job).generateScript();
-                        Service<Void> service = new RemoteScriptRunner(console, cluster, scriptPath);
-
-                        ProgressDialog progDiag = new ProgressDialog(service);
-                        progDiag.setTitle("Running job");
-                        progDiag.initOwner(null);
-                        progDiag.setHeaderText("SSH job");
-                        progDiag.initModality(Modality.WINDOW_MODAL);
-                        service.start();
-                    } catch (IOException | HadoopRunnerException e) {
-                        console.appendToConsole(e);
-                    }
-                }
-            });
-            */
         runMenu.getItems().add(menuRun);
 
     }
 
 
     private ObservableStringValue checkIfJob() {
-        TreeItem<String> item = getTreeItem();
-        if (item != null && item.getParent() != null && !item.getParent().getValue().equals(ROOT_TREE_NODE))
+        TreeItem<NavigatorTreeContent> item = getTreeItem();
+        if (item != null && item.getParent() != null && !isRoot(item.getParent().getValue()))
             return new SimpleStringProperty("hola");
         return null;
     }
@@ -169,8 +140,8 @@ public class TreeCellImpl extends TreeCell<String> {
 
 
     private void editJob() {
-        String mainClass = getTreeItem().getValue();
-        String projectName = getTreeItem().getParent().getValue();
+        String mainClass = getTreeItem().getValue().getFullName();
+        String projectName = getTreeItem().getParent().getValue().getFullName();
         try {
             Job job = new JobDAO().getJob(projectName, mainClass);
             cmbProjects.getSelectionModel().select(job.getProjectName());
@@ -195,7 +166,7 @@ public class TreeCellImpl extends TreeCell<String> {
     private void editProject() {
         try {
 
-            Project project = new ProjectDAO().getProject(getTreeItem().getValue());
+            Project project = new ProjectDAO().getProject(getTreeItem().getValue().getFullName());
             ProjectDialog dialog = new ProjectDialog(project);
             Optional<Project> result = dialog.showAndWait();
             result.ifPresent(currentProject -> {
@@ -211,7 +182,7 @@ public class TreeCellImpl extends TreeCell<String> {
     }
 
     @Override
-    public void updateItem(String item, boolean empty) {
+    public void updateItem(NavigatorTreeContent item, boolean empty) {
         super.updateItem(item, empty);
 
         if (empty) {
@@ -222,7 +193,7 @@ public class TreeCellImpl extends TreeCell<String> {
             setGraphic(getTreeItem().getGraphic());
             if (getTreeItem() == null || getTreeItem().getParent() == null || getTreeItem().getParent().getValue() == null)
                 return;
-            if (getTreeItem().isLeaf() && !getTreeItem().getParent().getValue().equals(ROOT_TREE_NODE)) {
+            if (getTreeItem().isLeaf() && !isRoot(getTreeItem().getParent().getValue())) {
                 setContextMenu(runMenu);
             } else if (getTreeItem().getParent() != null) setContextMenu(addMenu);
 

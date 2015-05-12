@@ -91,7 +91,7 @@
                     <content>
                         <BorderPane prefHeight="200.0" prefWidth="200.0">
                             <center>
-                                <TextArea fx:id="txtTemplateScript" editable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                                <TextArea fx:id="txtTemplateScript" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
                             </center>
                      <bottom>
                         <Button mnemonicParsing="false" onAction="#saveTemplate" text="Save" BorderPane.alignment="CENTER" />

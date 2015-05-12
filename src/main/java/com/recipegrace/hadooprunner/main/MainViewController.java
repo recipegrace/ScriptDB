@@ -10,8 +10,9 @@ import com.recipegrace.hadooprunner.dialogs.KeyValueDialog;
 import com.recipegrace.hadooprunner.dialogs.ProjectDialog;
 import com.recipegrace.hadooprunner.dialogs.TemplateAddDialog;
 import com.recipegrace.hadooprunner.job.ButtonCell;
-import com.recipegrace.hadooprunner.job.TreeCellImpl;
+import com.recipegrace.hadooprunner.tree.TreeCellImpl;
 import com.recipegrace.hadooprunner.template.ScriptGenerator;
+import com.recipegrace.hadooprunner.tree.NavigatorTreeContent;
 import com.recipegrace.hadooprunner.wizard.RunSSHCommandWizard;
 import com.recipegrace.hadooprunner.wizard.TemplateEditWizard;
 import com.sun.prism.impl.Disposer.Record;
@@ -39,9 +40,8 @@ import java.util.stream.Collectors;
  * Created by fjacob on 4/10/15.
  */
 public class MainViewController {
-    public static final String ROOT_TREE_NODE = "All projects";
     static Logger log = Logger.getLogger(MainViewController.class.getName());
-    TreeItem<String> rootNode;
+    private TreeItem<NavigatorTreeContent> rootNode;
 
 
     @FXML
@@ -184,14 +184,14 @@ public class MainViewController {
     }
 
     private void initJobTree() {
-        rootNode = new TreeItem<String>(ROOT_TREE_NODE);
+        rootNode = new NavigatorTreeContent().newRootNode();
 
         try {
             for (Project project : new ProjectDAO().getAll()) {
-                TreeItem<String> projectNode = new TreeItem<String>(project.getProjectName());
+                TreeItem<NavigatorTreeContent> projectNode = new NavigatorTreeContent().newProjectNode(project.getProjectName());
                 for (Job job : new JobDAO().getJobs(project.getProjectName())) {
 
-                    TreeItem<String> jobNode = new TreeItem<String>(job.getMainClassName());
+                    TreeItem<NavigatorTreeContent> jobNode = new NavigatorTreeContent().newJobNode((job.getMainClassName()));
                     projectNode.getChildren().add(jobNode);
                 }
                 rootNode.getChildren().add(projectNode);
@@ -201,9 +201,9 @@ public class MainViewController {
         }
 
         navigatorTree.setRoot(rootNode);
-        navigatorTree.setCellFactory(new Callback<TreeView<String>, TreeCell<String>>() {
+        navigatorTree.setCellFactory(new Callback<TreeView<NavigatorTreeContent>, TreeCell<NavigatorTreeContent>>() {
             @Override
-            public TreeCell<String> call(TreeView<String> p) {
+            public TreeCell<NavigatorTreeContent> call(TreeView<NavigatorTreeContent> p) {
                 return new TreeCellImpl(cmbProjects, cmbTemplates, txtMainClass, tblVMArguments, tblProgramArguments, console);
             }
         });
@@ -211,7 +211,7 @@ public class MainViewController {
     }
 
     @FXML
-    private TreeView<String> navigatorTree;
+    private TreeView<NavigatorTreeContent> navigatorTree;
 
     @FXML
     private BorderPane mainScene;
@@ -249,12 +249,13 @@ public class MainViewController {
 
         ProjectDialog dialog = new ProjectDialog();
         Optional<Project> result = dialog.showAndWait();
+
         result.ifPresent(project -> {
             ProjectDAO dao = new ProjectDAO();
             try {
                 dao.createProject(project);
                 console.appendToConsole("created " + project.getProjectName() + " project");
-                navigatorTree.getRoot().getChildren().add(new TreeItem<String>(project.getProjectName()));
+                navigatorTree.getRoot().getChildren().add(new NavigatorTreeContent().newProjectNode(project.getProjectName()));
                 cmbProjects.getItems().add(project.getProjectName());
             } catch (IOException | HadoopRunnerException e) {
                 console.appendToConsole(e);
@@ -407,7 +408,7 @@ public class MainViewController {
         template.setTemplate(txtTemplateScript.getText());
         try {
             tempDAO.saveTemplate(template);
-            console.appendToConsole("template " + template.getTemplateName()+ " saved");
+            console.appendToConsole("template " + template.getTemplateName() + " saved");
         } catch (IOException | HadoopRunnerException e) {
             console.appendToConsole(e);
         }
