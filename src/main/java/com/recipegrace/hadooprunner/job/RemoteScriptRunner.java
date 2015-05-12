@@ -51,6 +51,7 @@ public class RemoteScriptRunner<Void> extends Service<Void> {
 
             @Override
             protected Void call() throws Exception {
+                console.clear();
                 transferFileToServer(new File(scriptPath), "hola.sh");
                 updateProgress(1, 2);
                 executeSSHCommand("sh hola.sh");

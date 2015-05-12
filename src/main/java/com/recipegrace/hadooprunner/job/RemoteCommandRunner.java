@@ -28,6 +28,7 @@ public class RemoteCommandRunner<Void> extends Service<Void> {
 
             @Override
             protected Void call() throws Exception {
+                console.clear();
                 executeSSHCommand(command);
                 updateProgress(1, 1);
                 return null;

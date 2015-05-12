@@ -84,6 +84,7 @@ public class TemplateEditWizard extends Wizard {
                 template.setTemplateName(txtTemplateName.getText());
                 try {
                     tempDAO.saveTemplate(template);
+                    console.appendToConsole("template " + template.getTemplateName()+ " saved");
                 } catch (IOException | HadoopRunnerException e) {
                     console.appendToConsole(e);
                 }
