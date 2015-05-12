@@ -21,7 +21,7 @@ What is not there in TailorSwift?
 ScriptDB is using a sophisticated template engine, hence the scripts can be in any language (e.g., Python, Bash)
 
 An example demo showing how to submit a job in CB cluster is given below
-[![ScreenShot](https://github.com/feroshjacob/scriptdb/blob/master/doc/youtube.png)](https://youtu.be/KCS0hEesMSI
+[![ScreenShot](https://github.com/feroshjacob/scriptdb/blob/master/doc/youtube.png)](https://youtu.be/KCS0hEesMSI)
 
 
 
