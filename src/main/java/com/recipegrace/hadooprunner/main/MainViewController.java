@@ -106,8 +106,13 @@ public class MainViewController {
         console = new Console(consoleTextArea);
         initJobTree();
         initProjects();
-        List<Pair<String, String>> pair = new ArrayList<Pair<String, String>>();
 
+
+        initJobTables();
+    }
+
+    private void initJobTables() {
+        List<Pair<String, String>> pair = new ArrayList<Pair<String, String>>();
         initTblColumns();
         initTable(tblVMArguments, pair);
         initTable(tblProgramArguments, pair);
@@ -136,14 +141,7 @@ public class MainViewController {
 
         //Adding the Button to the cell
         tblColDeleteProgramArgs.setCellFactory(
-                new Callback<TableColumn<Record, Boolean>, TableCell<Record, Boolean>>() {
-
-                    @Override
-                    public TableCell<Record, Boolean> call(TableColumn<Record, Boolean> p) {
-                        return new ButtonCell(tblProgramArguments.getItems());
-                    }
-
-                });
+                p -> new ButtonCell(tblProgramArguments.getItems()));
         tblColDeleteVMArguments.setCellValueFactory(
                 new Callback<TableColumn.CellDataFeatures<Record, Boolean>,
                         ObservableValue<Boolean>>() {
@@ -156,14 +154,7 @@ public class MainViewController {
 
         //Adding the Button to the cell
         tblColDeleteVMArguments.setCellFactory(
-                new Callback<TableColumn<Record, Boolean>, TableCell<Record, Boolean>>() {
-
-                    @Override
-                    public TableCell<Record, Boolean> call(TableColumn<Record, Boolean> p) {
-                        return new ButtonCell(tblVMArguments.getItems());
-                    }
-
-                });
+                p -> new ButtonCell(tblVMArguments.getItems()));
 
     }
 
@@ -239,9 +230,7 @@ public class MainViewController {
         cmbProjects.getSelectionModel().clearSelection();
         cmbTemplates.getSelectionModel().clearSelection();
         cmbProjects.setDisable(false);
-        List<Pair<String, String>> pair = new ArrayList<Pair<String, String>>();
-        initTable(tblProgramArguments, pair);
-        initTable(tblVMArguments, pair);
+        initJobTables();
     }
 
 
@@ -312,16 +301,30 @@ public class MainViewController {
         Map<String, String> programArguments = tableToMap(tblProgramArguments);
         Map<String, String> vMArguments = tableToMap(tblVMArguments);
         JobDAO dao = new JobDAO();
+        String projectName = cmbProjects.getSelectionModel().getSelectedItem();
+        String templateName = cmbTemplates.getSelectionModel().getSelectedItem();
+        String mainClass =  txtMainClass.getText();
         try {
-            dao.createJob(cmbProjects.getSelectionModel().getSelectedItem(),
-                    cmbTemplates.getSelectionModel().getSelectedItem(),
-                    txtMainClass.getText(), vMArguments, programArguments
+
+            dao.createJob(projectName,
+                    templateName,mainClass
+                  , vMArguments, programArguments
             );
         } catch (IOException | HadoopRunnerException e) {
             console.appendToConsole(e);
         }
         console.appendToConsole("created " + txtMainClass.getText() + " job");
-        initJobTree();
+
+        TreeItem<NavigatorTreeContent> projectNode = null;
+        for(TreeItem<NavigatorTreeContent> node: rootNode.getChildren()){
+            if(node.getValue().getFullName().equals(projectName)) projectNode= node;
+        }
+
+            TreeItem<NavigatorTreeContent> jobNode = new NavigatorTreeContent().newJobNode((mainClass));
+            projectNode.getChildren().add(jobNode);
+
+
+
         txtMainClass.setDisable(true);
         cmbProjects.setDisable(true);
     }

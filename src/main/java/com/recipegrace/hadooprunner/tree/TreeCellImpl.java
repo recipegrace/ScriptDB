@@ -14,6 +14,7 @@ import com.recipegrace.hadooprunner.template.ScriptGenerator;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -151,9 +152,17 @@ public class TreeCellImpl extends TreeCell<NavigatorTreeContent> {
             txtMainClass.setDisable(true);
             cmbTemplates.getSelectionModel().select(job.getTemplateName());
             List<Pair<String, String>> vMPairs = getPairs(job.getVmArguments());
-            tblVMArguments.setItems(FXCollections.observableArrayList(vMPairs));
+
+            //tblVMArguments.setItems(FXCollections.observableArrayList(vMPairs));
+
             List<Pair<String, String>> programPairs = getPairs(job.getProgramArguments());
-            tblProgramArguments.setItems(FXCollections.observableArrayList(programPairs));
+
+            tblProgramArguments.getItems().clear();
+            tblProgramArguments.getItems().addAll(programPairs);
+         //   tblProgramArguments.setItems(FXCollections.observableArrayList(programPairs));
+
+
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

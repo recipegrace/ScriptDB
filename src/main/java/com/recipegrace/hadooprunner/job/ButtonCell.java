@@ -20,16 +20,12 @@ public class ButtonCell extends TableCell<Record, Boolean> {
     public ButtonCell(ObservableList<Pair<String, String>> data) {
         this.data = data;
         //Action when the button is pressed
-        cellButton.setOnAction(new EventHandler<ActionEvent>() {
+        cellButton.setOnAction(t -> {
+            // get Selected Item
+            Pair<String, String> currentPair = (Pair<String, String>) ButtonCell.this.getTableView().getItems().get(ButtonCell.this.getIndex());
+            //remove selected item from the table list
+            data.remove(currentPair);
 
-            @Override
-            public void handle(ActionEvent t) {
-                // get Selected Item
-                Pair<String, String> currentPair = (Pair<String, String>) ButtonCell.this.getTableView().getItems().get(ButtonCell.this.getIndex());
-                //remove selected item from the table list
-                data.remove(currentPair);
-                System.out.println("Hello world");
-            }
         });
     }
 
