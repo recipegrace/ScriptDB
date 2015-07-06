@@ -104,11 +104,11 @@ public class MainViewController {
     @FXML
     void initialize() {
         console = new Console(consoleTextArea);
+        mainTab.setVisible(true);
         initJobTree();
         initProjects();
-
-
         initJobTables();
+
     }
 
     private void initJobTables() {
@@ -182,13 +182,16 @@ public class MainViewController {
                 TreeItem<NavigatorTreeContent> projectNode = new NavigatorTreeContent().newProjectNode(project.getProjectName());
                 for (Job job : new JobDAO().getJobs(project.getProjectName())) {
 
-                    TreeItem<NavigatorTreeContent> jobNode = new NavigatorTreeContent().newJobNode((job.getMainClassName()));
+                    TreeItem<NavigatorTreeContent> jobNode = new NavigatorTreeContent().newJobNode(job.getMainClassName(), job.getId());
                     projectNode.getChildren().add(jobNode);
                 }
                 rootNode.getChildren().add(projectNode);
             }
         } catch (FileNotFoundException e) {
             console.appendToConsole(e);
+        } catch (IOException e) {
+            console.appendToConsole(e);
+
         }
 
         navigatorTree.setRoot(rootNode);
@@ -224,6 +227,8 @@ public class MainViewController {
     }
 
     public void newJob(ActionEvent actionEvent) throws IOException {
+
+        mainTab.setVisible(true);
 
         txtMainClass.setDisable(false);
         txtMainClass.setText("");
@@ -273,9 +278,10 @@ public class MainViewController {
         addToTable(tblProgramArguments);
     }
 
-    public void saveJob(ActionEvent actionEvent) {
+    public void saveJob(ActionEvent actionEvent) throws FileNotFoundException {
 
-        if (txtMainClass.isDisabled()) {
+        if (cmbProjects.isDisabled()) {
+
             updateJob();
         } else createJob();
 
@@ -297,7 +303,7 @@ public class MainViewController {
         console.appendToConsole("updated " + txtMainClass.getText() + " job");
     }
 
-    private void createJob() {
+    private void createJob() throws FileNotFoundException {
         Map<String, String> programArguments = tableToMap(tblProgramArguments);
         Map<String, String> vMArguments = tableToMap(tblVMArguments);
         JobDAO dao = new JobDAO();
@@ -320,13 +326,12 @@ public class MainViewController {
             if(node.getValue().getFullName().equals(projectName)) projectNode= node;
         }
 
-            TreeItem<NavigatorTreeContent> jobNode = new NavigatorTreeContent().newJobNode((mainClass));
+        Job job= dao.getJob(projectName,mainClass);
+        TreeItem<NavigatorTreeContent> jobNode = new NavigatorTreeContent().newJobNode((mainClass), job.getId());
             projectNode.getChildren().add(jobNode);
 
-
-
-        txtMainClass.setDisable(true);
         cmbProjects.setDisable(true);
+        mainTab.setVisible(false);
     }
 
     private Map<String, String> tableToMap(TableView<Pair<String, String>> tableview) {

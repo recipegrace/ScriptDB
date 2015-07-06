@@ -142,10 +142,9 @@ public class TreeCellImpl extends TreeCell<NavigatorTreeContent> {
 
 
     private void editJob() {
-        String mainClass = getTreeItem().getValue().getFullName();
-        String projectName = getTreeItem().getParent().getValue().getFullName();
+        String jobID = getTreeItem().getValue().getId();
         try {
-            Job job = new JobDAO().getJob(projectName, mainClass);
+            Job job = new JobDAO().getJob(jobID);
             cmbProjects.getSelectionModel().select(job.getProjectName());
             cmbProjects.setDisable(true);
             txtMainClass.setText(job.getMainClassName());

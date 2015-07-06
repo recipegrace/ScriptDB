@@ -7,6 +7,15 @@ import java.util.Map;
  */
 public class Job {
 
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
+
+    private String Id;
     private String projectName;
     private String mainClassName;
     private Map<String, String> vmArguments;

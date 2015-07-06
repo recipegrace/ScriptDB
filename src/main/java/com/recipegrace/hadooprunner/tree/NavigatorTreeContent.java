@@ -31,15 +31,15 @@ public class NavigatorTreeContent {
 
 
     public  TreeItem<NavigatorTreeContent> newRootNode() {
-        NavigatorTreeContent item= new NavigatorTreeContent("All projects", TreeItemType.root);
+        NavigatorTreeContent item= new NavigatorTreeContent("All projects", TreeItemType.root,"");
         return new TreeItem<NavigatorTreeContent>(item, rootIcon);
     }
     public TreeItem<NavigatorTreeContent> newProjectNode(String project) {
-        NavigatorTreeContent item= new NavigatorTreeContent(project, TreeItemType.project);
+        NavigatorTreeContent item= new NavigatorTreeContent(project, TreeItemType.project,"");
         return new TreeItem<NavigatorTreeContent>(item, projectIcon);
     }
-    public  TreeItem<NavigatorTreeContent> newJobNode(String job) {
-        NavigatorTreeContent item= new NavigatorTreeContent(job, TreeItemType.job);
+    public  TreeItem<NavigatorTreeContent> newJobNode(String mainClass, String id) {
+        NavigatorTreeContent item= new NavigatorTreeContent(mainClass, TreeItemType.job,id);
         return new TreeItem<NavigatorTreeContent>(item, jobIcon);
     }
 
@@ -62,9 +62,18 @@ public class NavigatorTreeContent {
     private String fullName;
     private TreeItemType type;
 
-    public NavigatorTreeContent(String fullName, TreeItemType type) {
+    public String getId() {
+        return id;
+    }
+
+    private String id;
+
+
+
+    public NavigatorTreeContent(String fullName, TreeItemType type,String id) {
         this.type = type;
         this.fullName = fullName;
+        this.id=id;
     }
 
     @Override
