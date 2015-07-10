@@ -5,47 +5,32 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.util.Pair;
 
 /**
  * Created by fjacob on 4/13/15.
  */
-public class KeyValueDialog extends Dialog<Pair<String, String>> {
+public class ArgumentDialog extends Dialog<Argument> {
 
 
-    private boolean editMode = false;
 
-    public KeyValueDialog() {
+
+    public ArgumentDialog() {
         this.setTitle("New key-value pair");
         this.setHeaderText("Create a key-value pair");
-        createProjectForm();
+        createArgumentForm();
         validations();
         Platform.runLater(() -> txtKey.requestFocus());
-        convertResultToProject();
+        convertResultToKeyValue();
 
 
     }
 
-    public KeyValueDialog(Pair<String, String> pair) {
-        this.editMode = true;
-        this.setTitle("Edit key-value pair");
-        this.setHeaderText("Edit a key-value pair!");
-        createProjectForm();
-        validations();
-
-        Platform.runLater(() -> txtKey.requestFocus());
-        convertResultToProject();
-
-        this.txtValue.setText(pair.getValue());
-        this.txtKey.setText(pair.getKey());
 
 
-    }
-
-    private void convertResultToProject() {
+    private void convertResultToKeyValue() {
         this.setResultConverter(dialogButton -> {
             if (dialogButton == buttonType) {
-                return new Pair<String, String>(txtKey.getText(), txtValue.getText());
+                return new Argument(txtKey.getText(), txtValue.getText(), chkIsVM.isSelected());
             }
             return null;
         });
@@ -69,12 +54,11 @@ public class KeyValueDialog extends Dialog<Pair<String, String>> {
     private TextField txtKey;
 
     private TextField txtValue;
+    private CheckBox chkIsVM;
 
-    private void createProjectForm() {
+    private void createArgumentForm() {
         // Set the button types.
-        if (editMode)
-            buttonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
-        else
+
             buttonType = new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
         this.getDialogPane().getButtonTypes().addAll(buttonType, ButtonType.CANCEL);
 
@@ -85,13 +69,16 @@ public class KeyValueDialog extends Dialog<Pair<String, String>> {
         grid.setPadding(new Insets(20, 150, 10, 10));
 
         txtKey = new TextField();
-        if (editMode) txtKey.setDisable(true);
         txtKey.setPromptText("Key name");
         txtValue = new TextField();
+        chkIsVM= new CheckBox();
+
         grid.add(new Label("Key:"), 0, 0);
         grid.add(txtKey, 1, 0);
         grid.add(new Label("Value:"), 0, 1);
         grid.add(txtValue, 1, 1);
+        grid.add(new Label("VM argument"), 0, 2);
+        grid.add(chkIsVM, 1, 2);
 
         this.getDialogPane().setContent(grid);
 

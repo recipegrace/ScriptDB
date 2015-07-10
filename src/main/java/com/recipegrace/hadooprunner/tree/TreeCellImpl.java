@@ -7,6 +7,7 @@ import com.recipegrace.hadooprunner.core.Project;
 import com.recipegrace.hadooprunner.db.ClusterDAO;
 import com.recipegrace.hadooprunner.db.JobDAO;
 import com.recipegrace.hadooprunner.db.ProjectDAO;
+import com.recipegrace.hadooprunner.dialogs.JobDialog;
 import com.recipegrace.hadooprunner.dialogs.ProjectDialog;
 import com.recipegrace.hadooprunner.job.RemoteScriptRunner;
 import com.recipegrace.hadooprunner.main.Console;
@@ -57,7 +58,13 @@ public class TreeCellImpl extends TreeCell<NavigatorTreeContent> {
                     editProject();
 
                 } else if (item.getParent() != null && !isRoot(item.getParent().getValue())) {
-                    editJob();
+                    try {
+                        editJob(item);
+                    } catch (HadoopRunnerException e) {
+                        console.appendToConsole(e);
+                    }
+
+
                 }
             }
         };
@@ -114,24 +121,12 @@ public class TreeCellImpl extends TreeCell<NavigatorTreeContent> {
     }
 
 
-    private ComboBox<String> cmbProjects;
-    private ComboBox<String> cmbTemplates;
-    private TableView<Pair<String, String>> tblVMArguments;
-    private TableView<Pair<String, String>> tblProgramArguments;
-    private TextField txtMainClass;
+
     private Console console;
 
-    public TreeCellImpl(ComboBox<String> cmbProjects,
-                        ComboBox<String> cmbTemplates,
-                        TextField txtMainClass,
-                        TableView<Pair<String, String>> tblVMArguments,
-                        TableView<Pair<String, String>> tblProgramArguments,
+    public TreeCellImpl(
                         Console console) {
-        this.cmbProjects = cmbProjects;
-        this.cmbTemplates = cmbTemplates;
-        this.tblProgramArguments = tblProgramArguments;
-        this.tblVMArguments = tblVMArguments;
-        this.txtMainClass = txtMainClass;
+
         this.console = console;
         try {
             createMenu();
@@ -141,24 +136,31 @@ public class TreeCellImpl extends TreeCell<NavigatorTreeContent> {
     }
 
 
-    private void editJob() {
-        String jobID = getTreeItem().getValue().getId();
+    private void editJob(TreeItem<NavigatorTreeContent> item) throws HadoopRunnerException {
+
         try {
-            Job job = new JobDAO().getJob(jobID);
-            cmbProjects.getSelectionModel().select(job.getProjectName());
-            cmbProjects.setDisable(true);
-            txtMainClass.setText(job.getMainClassName());
-            txtMainClass.setDisable(true);
-            cmbTemplates.getSelectionModel().select(job.getTemplateName());
-            List<Pair<String, String>> vMPairs = getPairs(job.getVmArguments());
+            String jobID=getTreeItem().getValue().getId();
+            Job currentJob = new JobDAO().getJob(jobID);
+            JobDialog dialog = new JobDialog(console,currentJob);
+            Optional<Job> result = dialog.showAndWait();
+            result.ifPresent(job -> {
 
-            //tblVMArguments.setItems(FXCollections.observableArrayList(vMPairs));
+                try {
+                    job.setId(jobID);
+                    new JobDAO().saveJob(job);
+                    TreeItem<NavigatorTreeContent> project = item.getParent();
 
-            List<Pair<String, String>> programPairs = getPairs(job.getProgramArguments());
+                    for(TreeItem<NavigatorTreeContent> proj: project.getParent().getChildren()){
+                        if(job.getProjectName().equals(proj.getValue().getFullName())){
+                            proj.getChildren().add(new NavigatorTreeContent().newJobNode(job.getMainClassName(),job.getId()));
+                        }
+                    }
+                    project .getChildren().remove(item);
 
-            tblProgramArguments.getItems().clear();
-            tblProgramArguments.getItems().addAll(programPairs);
-         //   tblProgramArguments.setItems(FXCollections.observableArrayList(programPairs));
+                } catch (IOException | HadoopRunnerException e) {
+                    console.appendToConsole(e);
+                }
+            });
 
 
 
@@ -168,9 +170,7 @@ public class TreeCellImpl extends TreeCell<NavigatorTreeContent> {
 
     }
 
-    private List<Pair<String, String>> getPairs(Map<String, String> map) {
-        return map.keySet().stream().map(f -> new Pair<String, String>(f, map.get(f))).collect(Collectors.toList());
-    }
+
 
     private void editProject() {
         try {
@@ -183,6 +183,7 @@ public class TreeCellImpl extends TreeCell<NavigatorTreeContent> {
                 try {
                     dao.saveProject(currentProject);
                 } catch (IOException | HadoopRunnerException e) {
+                    console.appendToConsole(e);
                 }
             });
         } catch (FileNotFoundException e) {

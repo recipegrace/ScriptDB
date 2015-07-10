@@ -18,9 +18,9 @@ import java.util.stream.Stream;
  */
 public class JobDAO extends AbstractDAO<Job> {
 
-    public void createJob(String projectName, String templateName, String mainClass, Map<String, String> vmArguments, Map<String, String> programArguments) throws IOException, HadoopRunnerException {
-        checkJobExist(projectName, mainClass);
-        Job job = getJob(projectName, templateName, mainClass, vmArguments, programArguments,true);
+    public void createJob(Job job) throws IOException, HadoopRunnerException {
+        checkJobExist(job.getProjectName(), job.getMainClassName());
+        job.setId(System.currentTimeMillis() + "");
         List<Job> jobs = getAll();
         jobs.add(job);
         saveAsJSON(jobs);
@@ -39,11 +39,11 @@ public class JobDAO extends AbstractDAO<Job> {
         return job;
     }
 
-    public void saveJob(String projectName, String templateName, String mainClass, Map<String, String> vmArguments, Map<String, String> programArguments) throws IOException, HadoopRunnerException {
+    public void saveJob(Job job) throws IOException, HadoopRunnerException {
 
-        Job job = getJob(projectName, templateName, mainClass, vmArguments, programArguments,false);
+
         List<Job> jobs = getAll().stream()
-                .filter(f -> !(f.getProjectName().equals(projectName) && f.getMainClassName().equals(mainClass)))
+                .filter(f -> !(f.getId().equals(job.getId())))
                 .collect(Collectors.toList());
         jobs.add(job);
         saveAsJSON(jobs);
@@ -98,13 +98,17 @@ public class JobDAO extends AbstractDAO<Job> {
         }.getType();
     }
 
-    public Job getJob(String jobID) throws FileNotFoundException {
+    public Job getJob(String jobID) throws FileNotFoundException, HadoopRunnerException {
         Stream<Job> selectedProjects = getAll().stream().filter(f -> f.getId().equals(jobID));
-        return selectedProjects.findFirst().orElse(null);
+        Job job = selectedProjects.findFirst().orElse(null);
+        if(job==null) throw new HadoopRunnerException("No job exists for jobID: " +  jobID);
+        return job;
     }
-    public Job getJob(String projectName, String mainClass) throws FileNotFoundException {
+    public Job getJob(String projectName, String mainClass) throws FileNotFoundException, HadoopRunnerException {
         Stream<Job> selectedProjects = getAll().stream().filter(f -> f.getProjectName().equals(projectName)
                 && f.getMainClassName().equals(mainClass));
-        return selectedProjects.findFirst().orElse(null);
+        Job job = selectedProjects.findFirst().orElse(null);
+        if(job==null) throw new HadoopRunnerException("No job exists for project: " + projectName + " mainclass: "+ mainClass);
+        return job;
     }
 }

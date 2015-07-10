@@ -5,11 +5,7 @@ import com.recipegrace.hadooprunner.db.ClusterDAO;
 import com.recipegrace.hadooprunner.db.JobDAO;
 import com.recipegrace.hadooprunner.db.ProjectDAO;
 import com.recipegrace.hadooprunner.db.TemplateDAO;
-import com.recipegrace.hadooprunner.dialogs.ClusterDialog;
-import com.recipegrace.hadooprunner.dialogs.KeyValueDialog;
-import com.recipegrace.hadooprunner.dialogs.ProjectDialog;
-import com.recipegrace.hadooprunner.dialogs.TemplateAddDialog;
-import com.recipegrace.hadooprunner.job.ButtonCell;
+import com.recipegrace.hadooprunner.dialogs.*;
 import com.recipegrace.hadooprunner.tree.TreeCellImpl;
 import com.recipegrace.hadooprunner.template.ScriptGenerator;
 import com.recipegrace.hadooprunner.tree.NavigatorTreeContent;
@@ -44,135 +40,25 @@ public class MainViewController {
     private TreeItem<NavigatorTreeContent> rootNode;
 
 
-    @FXML
-    private TabPane mainTab;
+
 
     @FXML
     private TextArea consoleTextArea;
 
     private Console console;
 
-    @FXML
-    private ComboBox<String> cmbProjects;
 
-    @FXML
-    private ComboBox<String> cmbTemplates;
-
-    @FXML
-    private Button btnSaveJob;
-
-
-    @FXML
-    private Button btnNewVMArguments;
-
-
-    @FXML
-    private TextField txtMainClass;
-
-    @FXML
-    private TableColumn tblColDeleteProgramArgs;
-
-    @FXML
-    private TableColumn tblColDeleteVMArguments;
-
-
-    @FXML
-    private Button btnNewProgramArguments;
-    @FXML
-    private TableView<Pair<String, String>> tblVMArguments;
-    @FXML
-    private TableView<Pair<String, String>> tblProgramArguments;
-
-
-    @FXML
-    private TableColumn<Pair<String, String>, String> tblColKeyVMArguments;
-
-
-    @FXML
-    private TableColumn<Pair<String, String>, String> tblColValueProgramArgs;
-
-    @FXML
-    private TableColumn<Pair<String, String>, String> tblColValueVMArguments;
-
-    @FXML
-    private TableColumn<Pair<String, String>, String> tblColKeyProgramArgs;
-
-
-    @FXML
-    private TextArea txtGeneratedScript;
 
     @FXML
     void initialize() {
         console = new Console(consoleTextArea);
-        mainTab.setVisible(true);
+
         initJobTree();
-        initProjects();
-        initJobTables();
 
-    }
-
-    private void initJobTables() {
-        List<Pair<String, String>> pair = new ArrayList<Pair<String, String>>();
-        initTblColumns();
-        initTable(tblVMArguments, pair);
-        initTable(tblProgramArguments, pair);
-    }
-
-    private void initTable(TableView<Pair<String, String>> tableView, List<Pair<String, String>> pairs) {
-
-        ObservableList<Pair<String, String>> data = FXCollections.observableArrayList(pairs);
-        tableView.setItems(data);
-    }
-
-    private void initTblColumns() {
-        tblColKeyVMArguments.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getKey()));
-        tblColValueVMArguments.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getValue()));
-        tblColKeyProgramArgs.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getKey()));
-        tblColValueProgramArgs.setCellValueFactory(f -> new SimpleStringProperty(f.getValue().getValue()));
-        tblColDeleteProgramArgs.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<Record, Boolean>,
-                        ObservableValue<Boolean>>() {
-
-                    @Override
-                    public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<Record, Boolean> p) {
-                        return new SimpleBooleanProperty(p.getValue() != null);
-                    }
-                });
-
-        //Adding the Button to the cell
-        tblColDeleteProgramArgs.setCellFactory(
-                p -> new ButtonCell(tblProgramArguments.getItems()));
-        tblColDeleteVMArguments.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<Record, Boolean>,
-                        ObservableValue<Boolean>>() {
-
-                    @Override
-                    public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<Record, Boolean> p) {
-                        return new SimpleBooleanProperty(p.getValue() != null);
-                    }
-                });
-
-        //Adding the Button to the cell
-        tblColDeleteVMArguments.setCellFactory(
-                p -> new ButtonCell(tblVMArguments.getItems()));
 
     }
 
 
-    private void initProjects() {
-        ProjectDAO dao = new ProjectDAO();
-        List<String> projectNames = null;
-        try {
-            projectNames = dao.getAll().stream().map(f -> f.getProjectName()).collect(Collectors.toList());
-            cmbProjects.setItems(FXCollections.observableList(projectNames));
-            TemplateDAO tempDAO = new TemplateDAO();
-            List<String> templateNames = tempDAO.getAll().stream().map(f -> f.getTemplateName()).collect(Collectors.toList());
-            cmbTemplates.setItems(FXCollections.observableList(templateNames));
-        } catch (FileNotFoundException e) {
-            console.appendToConsole(e);
-        }
-
-    }
 
     private void initJobTree() {
         rootNode = new NavigatorTreeContent().newRootNode();
@@ -198,7 +84,7 @@ public class MainViewController {
         navigatorTree.setCellFactory(new Callback<TreeView<NavigatorTreeContent>, TreeCell<NavigatorTreeContent>>() {
             @Override
             public TreeCell<NavigatorTreeContent> call(TreeView<NavigatorTreeContent> p) {
-                return new TreeCellImpl(cmbProjects, cmbTemplates, txtMainClass, tblVMArguments, tblProgramArguments, console);
+                return new TreeCellImpl(console);
             }
         });
 
@@ -226,17 +112,7 @@ public class MainViewController {
 
     }
 
-    public void newJob(ActionEvent actionEvent) throws IOException {
 
-        mainTab.setVisible(true);
-
-        txtMainClass.setDisable(false);
-        txtMainClass.setText("");
-        cmbProjects.getSelectionModel().clearSelection();
-        cmbTemplates.getSelectionModel().clearSelection();
-        cmbProjects.setDisable(false);
-        initJobTables();
-    }
 
 
     public void newProject(ActionEvent actionEvent) {
@@ -250,7 +126,7 @@ public class MainViewController {
                 dao.createProject(project);
                 console.appendToConsole("created " + project.getProjectName() + " project");
                 navigatorTree.getRoot().getChildren().add(new NavigatorTreeContent().newProjectNode(project.getProjectName()));
-                cmbProjects.getItems().add(project.getProjectName());
+
             } catch (IOException | HadoopRunnerException e) {
                 console.appendToConsole(e);
             }
@@ -258,88 +134,13 @@ public class MainViewController {
     }
 
 
-    public void newVMArguments(ActionEvent actionEvent) {
-        addToTable(tblVMArguments);
-
-    }
-
-    private void addToTable(TableView<Pair<String, String>> tableView) {
-        KeyValueDialog dialog = new KeyValueDialog();
-        Optional<Pair<String, String>> result = dialog.showAndWait();
-        result.ifPresent(pair -> {
-            ObservableList<Pair<String, String>> pairs = tableView.getItems();
-            pairs.add(pair);
-            tableView.setItems(pairs);
-        });
-
-    }
-
-    public void newProgramArguments(ActionEvent actionEvent) {
-        addToTable(tblProgramArguments);
-    }
-
-    public void saveJob(ActionEvent actionEvent) throws FileNotFoundException {
-
-        if (cmbProjects.isDisabled()) {
-
-            updateJob();
-        } else createJob();
 
 
-    }
 
-    private void updateJob() {
-        Map<String, String> programArguments = tableToMap(tblProgramArguments);
-        Map<String, String> vMArguments = tableToMap(tblVMArguments);
-        JobDAO dao = new JobDAO();
-        try {
-            dao.saveJob(cmbProjects.getSelectionModel().getSelectedItem(),
-                    cmbTemplates.getSelectionModel().getSelectedItem(),
-                    txtMainClass.getText(), vMArguments, programArguments
-            );
-        } catch (IOException | HadoopRunnerException e) {
-            console.appendToConsole(e);
-        }
-        console.appendToConsole("updated " + txtMainClass.getText() + " job");
-    }
 
-    private void createJob() throws FileNotFoundException {
-        Map<String, String> programArguments = tableToMap(tblProgramArguments);
-        Map<String, String> vMArguments = tableToMap(tblVMArguments);
-        JobDAO dao = new JobDAO();
-        String projectName = cmbProjects.getSelectionModel().getSelectedItem();
-        String templateName = cmbTemplates.getSelectionModel().getSelectedItem();
-        String mainClass =  txtMainClass.getText();
-        try {
 
-            dao.createJob(projectName,
-                    templateName,mainClass
-                  , vMArguments, programArguments
-            );
-        } catch (IOException | HadoopRunnerException e) {
-            console.appendToConsole(e);
-        }
-        console.appendToConsole("created " + txtMainClass.getText() + " job");
 
-        TreeItem<NavigatorTreeContent> projectNode = null;
-        for(TreeItem<NavigatorTreeContent> node: rootNode.getChildren()){
-            if(node.getValue().getFullName().equals(projectName)) projectNode= node;
-        }
 
-        Job job= dao.getJob(projectName,mainClass);
-        TreeItem<NavigatorTreeContent> jobNode = new NavigatorTreeContent().newJobNode((mainClass), job.getId());
-            projectNode.getChildren().add(jobNode);
-
-        cmbProjects.setDisable(true);
-        mainTab.setVisible(false);
-    }
-
-    private Map<String, String> tableToMap(TableView<Pair<String, String>> tableview) {
-
-        Map<String, String> map = new HashMap<String, String>();
-        tableview.getItems().forEach(f -> map.put(f.getKey(), f.getValue()));
-        return map;
-    }
 
     public void newTemplate(ActionEvent actionEvent) {
         TemplateAddDialog dialog = new TemplateAddDialog();
@@ -349,37 +150,15 @@ public class MainViewController {
             try {
                 dao.createTemplate(template);
                 console.appendToConsole("created " + template.getTemplateName() + " template");
-                cmbTemplates.getItems().add(template.getTemplateName());
+
             } catch (IOException | HadoopRunnerException e) {
                 console.appendToConsole(e.getMessage());
             }
         });
     }
 
-    public void openTemplateScript(Event event) {
-        TemplateDAO dao = new TemplateDAO();
-        try {
-            Template template = dao.getTemplate(cmbTemplates.getSelectionModel().getSelectedItem());
-            if (template == null)
-                txtTemplateScript.setText("No template selected");
-            else
-                txtTemplateScript.setText(template.getTemplate());
-        } catch (FileNotFoundException e) {
-            console.appendToConsole(e);
-        }
-    }
-
-    public void openGeneratedScript(Event event) {
-
-        try {
-            ScriptGenerator generator = new ScriptGenerator(txtMainClass.getText(), cmbProjects.getSelectionModel().getSelectedItem());
-            txtGeneratedScript.setText(generator.generateScriptText());
-        } catch (IOException | HadoopRunnerException |NullPointerException e) {
-            console.appendToConsole(e);
-        }
 
 
-    }
 
     public void editTemplate(ActionEvent actionEvent) {
         TemplateEditWizard wizard = new TemplateEditWizard(console);
@@ -408,17 +187,34 @@ public class MainViewController {
         }
     }
 
-    TemplateDAO tempDAO = new TemplateDAO();
 
-    public void saveTemplate(ActionEvent actionEvent) {
-        Template template = new Template();
-        template.setTemplateName(cmbTemplates.getSelectionModel().getSelectedItem());
-        template.setTemplate(txtTemplateScript.getText());
-        try {
-            tempDAO.saveTemplate(template);
-            console.appendToConsole("template " + template.getTemplateName() + " saved");
-        } catch (IOException | HadoopRunnerException e) {
-            console.appendToConsole(e);
+
+
+    public void newJob(ActionEvent actionEvent) throws FileNotFoundException {
+
+        JobDialog dialog = new JobDialog(console);
+        Optional<Job> result = dialog.showAndWait();
+        result.ifPresent(job -> {
+
+            try {
+                new JobDAO().createJob(job);
+                console.appendToConsole("created " + job.getMainClassName() + " job");
+
+                updateTree(job.getProjectName(),job.getMainClassName());
+            } catch (IOException | HadoopRunnerException e) {
+                console.appendToConsole(e);
+            }
+        });
+    }
+
+    private void updateTree(String projectName, String mainClassName) throws FileNotFoundException, HadoopRunnerException {
+
+        for( TreeItem<NavigatorTreeContent>  item :navigatorTree.getRoot().getChildren() ){
+            if(item.getValue().getFullName().equals(projectName)){
+                JobDAO jobDAO = new JobDAO();
+                Job job =jobDAO.getJob(projectName, mainClassName);
+                item.getChildren().add(new NavigatorTreeContent().newJobNode(job.getMainClassName(), job.getId()));
+            }
         }
     }
 }
