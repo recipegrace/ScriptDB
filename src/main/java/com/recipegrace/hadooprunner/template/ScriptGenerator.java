@@ -28,7 +28,7 @@ public class ScriptGenerator {
     private Job job;
     private String template;
 
-    public ScriptGenerator(String mainClass, String projectName) throws FileNotFoundException {
+    public ScriptGenerator(String mainClass, String projectName) throws FileNotFoundException, HadoopRunnerException {
         this.mainClass = mainClass;
         this.project = new ProjectDAO().getProject(projectName);
         this.job = new JobDAO().getJob(projectName, mainClass);

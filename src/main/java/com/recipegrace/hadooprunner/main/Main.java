@@ -13,7 +13,7 @@ public class Main extends Application {
 
 
         Parent root = FXMLLoader.load(getClass().getResource("/main.fxml"));
-        primaryStage.setTitle("Hadoop Runner");
+        primaryStage.setTitle("ScriptDB");
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
     }

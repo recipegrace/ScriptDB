@@ -28,14 +28,15 @@ public abstract class AbstractDAO<T> {
     public List<T> getAll() throws FileNotFoundException {
         Type listType = getType();
         File file = new File(getFile());
-        List<T> projects = null;
+        List<T> entities = null;
         if (file.exists()) {
             BufferedReader br = new BufferedReader(
                     new FileReader(getFile()));
-            projects = new Gson().fromJson(br, listType);
-        } else projects = new ArrayList<T>();
-        log.info("Searched all objects and returned of size:" + projects.size() + " from file:" + getFile());
-        return projects;
+            entities = new Gson().fromJson(br, listType);
+            if(entities==null) entities =new ArrayList<T>();
+        } else entities = new ArrayList<T>();
+        log.info("Searched all objects and returned of size:" + entities.size() + " from file:" + getFile());
+        return entities;
     }
 
     protected abstract Type getType();
