@@ -9,6 +9,9 @@
 *.iml
 *.iws
 
+#Project
+
+.localproperties
 # Mac
 .DS_Store
 out/
