@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.recipegrace.scripts</groupId>
   <artifactId>scriptdb</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <properties>
       <jar.final.name>scriptdb-app</jar.final.name>
       <main.class>com.recipegrace.hadooprunner.main.Main</main.class>
